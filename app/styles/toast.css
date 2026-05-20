@@ -1,0 +1,122 @@
+/* ============================================================================
+   Toast UI editor chrome, layout, editing surface and scrollbars.
+   (Preview typography lives in preview.css; the custom toolbar in toolbar.css.)
+   ============================================================================ */
+
+/* ---------- Hide built-in chrome we replace ---------- */
+
+/* Bottom Markdown / WYSIWYG mode-switch tabs */
+.editor-container .toastui-editor-mode-switch,
+.editor-container .toastui-editor-md-mode-switch,
+.editor-container .toastui-editor-ww-mode-switch,
+.editor-container .toastui-editor-switch-button {
+  display: none !important;
+}
+
+/* Write/Preview tab bar — the eye button controls preview visibility instead */
+.editor-container .toastui-editor-md-tab-container {
+  display: none !important;
+}
+
+/* ---------- Preview toggle (eye button) ---------- */
+
+/* Collapsed to 'tab' style: hide the Markdown editor and show the rendered
+   output full-width (Toast otherwise defaults to the Write/markdown pane). */
+.editor-container .toastui-editor-md-tab-style > .toastui-editor {
+  display: none !important;
+}
+.editor-container .toastui-editor-md-tab-style > .toastui-editor-md-preview {
+  display: block !important;
+  width: 100% !important;
+}
+
+/* ---------- Fill height so both split panes match ---------- */
+
+/* Force the whole height chain to 100% so the vertical split stretches both
+   panes equally — without this the left editor shrinks to its content height
+   while the right preview fills, leaving them mismatched. */
+.editor-container .toastui-editor-defaultUI,
+.editor-container .toastui-editor-main,
+.editor-container .toastui-editor-main-container,
+.editor-container .toastui-editor-md-container {
+  height: 100% !important;
+}
+
+/* The left markdown pane defaults to `height: inherit`, which collapses to its
+   content height in the vertical split — force it to match the preview. */
+.editor-container .toastui-editor-md-container .toastui-editor {
+  height: 100% !important;
+}
+
+/* Let the editable surface fill the pane so its full height is clickable. */
+.editor-container .toastui-editor-md-container .toastui-editor .ProseMirror {
+  min-height: 100%;
+  box-sizing: border-box;
+}
+
+/* ---------- Editing surface palette (matches markdown-editor) ---------- */
+
+/* Light */
+.editor-container .toastui-editor-md-container .ProseMirror {
+  padding: 2px 30px 80px;
+  font-size: 15px;
+  line-height: 1.7;
+  font-family: Lato, "Helvetica Neue", Helvetica, sans-serif;
+  color: rgba(0, 0, 0, 0.8);
+  font-variant-ligatures: common-ligatures;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Dark — #121212 / white-80 */
+.editor-container .toastui-editor-dark.toastui-editor-defaultUI,
+.editor-container .toastui-editor-dark .toastui-editor-md-editor,
+.editor-container .toastui-editor-dark .toastui-editor-md-preview {
+  background: #121212;
+}
+
+.editor-container .toastui-editor-dark .toastui-editor-md-container .ProseMirror {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* ---------- Scrollbars (gray rounded thumb, transparent track) ---------- */
+.editor-container ::-webkit-scrollbar {
+  width: 10px !important;
+  height: 80px !important;
+}
+
+.editor-container ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.editor-container ::-webkit-scrollbar-thumb {
+  background: #bbb;
+  border-radius: 4px;
+}
+
+.editor-container ::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+/* Firefox */
+.editor-container .toastui-editor-md-preview,
+.editor-container .toastui-editor-md-container .toastui-editor,
+.editor-container .toastui-editor-md-container .ProseMirror {
+  scrollbar-width: thin;
+  scrollbar-color: #bbb transparent;
+}
+
+/* Dark — lighter-on-dark thumb so it stays visible on #121212 */
+.editor-container .toastui-editor-dark ::-webkit-scrollbar-thumb {
+  background: #555;
+}
+
+.editor-container .toastui-editor-dark ::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}
+
+.editor-container .toastui-editor-dark .toastui-editor-md-preview,
+.editor-container .toastui-editor-dark .toastui-editor-md-container .toastui-editor,
+.editor-container .toastui-editor-dark .toastui-editor-md-container .ProseMirror {
+  scrollbar-color: #555 transparent;
+}

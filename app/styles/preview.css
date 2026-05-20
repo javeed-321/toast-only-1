@@ -1,0 +1,378 @@
+/* ============================================================================
+   Toast UI preview (right pane) typography.
+   Ported verbatim from markdown-editor/styles/tiptap.css, re-scoped from
+   `.tiptap-output` onto Toast UI's preview output:
+     content  -> .toastui-editor-md-preview .toastui-editor-contents
+     scroller -> .toastui-editor-md-preview
+     dark     -> .toastui-editor-dark ... (class toggled on the toggle button)
+   Reference: StackEdit variables.scss + base.scss
+   line-height-base: 1.67 | line-height-title: 1.33
+   ============================================================================ */
+
+/* ---------- Container ---------- */
+.editor-container .toastui-editor-md-preview .toastui-editor-contents {
+  min-height: 100%;
+  outline: none;
+  padding: 0px 10px 10px 0px;
+  max-width: 750px;
+  margin: 0 auto;
+  font-size: 15px;
+  line-height: 1.7;
+  color: rgba(0, 0, 0, 0.75);
+  font-family: Lato, "Helvetica Neue", Helvetica, sans-serif;
+  font-variant-ligatures: common-ligatures;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.editor-container .toastui-editor-md-preview {
+  background: #f3f3f3;   /* StackEdit $preview-background-light */
+}
+
+/* Collapse first-child top margin so content sits flush at top */
+.editor-container .toastui-editor-md-preview .toastui-editor-contents > *:first-child { margin-top: 0; }
+
+/* ---------- Headings ---------- */
+.editor-container .toastui-editor-md-preview .toastui-editor-contents h1,
+.editor-container .toastui-editor-md-preview .toastui-editor-contents h2,
+.editor-container .toastui-editor-md-preview .toastui-editor-contents h3,
+.editor-container .toastui-editor-md-preview .toastui-editor-contents h4,
+.editor-container .toastui-editor-md-preview .toastui-editor-contents h5,
+.editor-container .toastui-editor-md-preview .toastui-editor-contents h6 {
+  margin: 1.8em 0 0.6em;
+  line-height: 1.3;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.85);
+}
+
+.editor-container .toastui-editor-md-preview .toastui-editor-contents h1 { font-size: 2em;    font-weight: 800; color: rgba(0, 0, 0, .75); }
+.editor-container .toastui-editor-md-preview .toastui-editor-contents h2 { font-size: 1.5em;  font-weight: 800; color: rgba(0, 0, 0, .75); }
+.editor-container .toastui-editor-md-preview .toastui-editor-contents h3 { font-size: 1.17em; font-weight: 800; color: rgba(0, 0, 0, .75); }
+.editor-container .toastui-editor-md-preview .toastui-editor-contents h4 { font-size: 1em;    font-weight: 800; color: rgba(0, 0, 0, .75); }
+.editor-container .toastui-editor-md-preview .toastui-editor-contents h5 { font-size: 0.83em; font-weight: 800; color: rgba(0, 0, 0, .75); }
+.editor-container .toastui-editor-md-preview .toastui-editor-contents h6 { font-size: 0.75em; font-weight: 800; color: rgba(0, 0, 0, .75); }
+
+/* h1 + h2 bottom rule — matches StackEdit */
+.editor-container .toastui-editor-md-preview .toastui-editor-contents h1::after,
+.editor-container .toastui-editor-md-preview .toastui-editor-contents h2::after {
+  content: '';
+  display: block;
+  position: relative;
+  top: 0.5em;
+  /* border-bottom: 1px solid rgba(128, 128, 128, 0.25); */
+}
+
+/* ---------- Body text ---------- */
+.editor-container .toastui-editor-md-preview .toastui-editor-contents p { margin: 1.2em 0; line-height: 1.7; }
+
+.editor-container .toastui-editor-md-preview .toastui-editor-contents strong { font-weight: 700; }
+
+/* ---------- Links ---------- */
+.editor-container .toastui-editor-md-preview .toastui-editor-contents a {
+  color: #0c93e4;
+  text-decoration: underline;
+  text-decoration-skip-ink: auto;
+}
+.editor-container .toastui-editor-md-preview .toastui-editor-contents a:hover,
+.editor-container .toastui-editor-md-preview .toastui-editor-contents a:focus { text-decoration: none; }
+
+/* ---------- Lists ---------- */
+.editor-container .toastui-editor-md-preview .toastui-editor-contents ul,
+.editor-container .toastui-editor-md-preview .toastui-editor-contents ol { margin: 1.2em 0; padding-left: 1.8em; }
+
+/* Toast UI sets `list-style-type: none` and paints its own bullet/number with
+   an absolutely-positioned `li::before` whose margin-top was tuned for its
+   default 13px line-height. At our 15px / line-height 1.7 that offset leaves a
+   vertical gap between the marker and the text. Hide Toast's pseudo markers and
+   use native list markers, which sit on the text line automatically — matching
+   the Tiptap preview. */
+.editor-container .toastui-editor-md-preview .toastui-editor-contents ul > li:not(.task-list-item)::before,
+.editor-container .toastui-editor-md-preview .toastui-editor-contents ol > li:not(.task-list-item)::before {
+  content: none !important;
+  display: none !important;
+}
+
+.editor-container .toastui-editor-md-preview .toastui-editor-contents ul { list-style: disc outside; }
+.editor-container .toastui-editor-md-preview .toastui-editor-contents ol { list-style: decimal outside; }
+
+/* Task-list items keep Toast's checkbox (::before) and must not get a bullet. */
+.editor-container .toastui-editor-md-preview .toastui-editor-contents li.task-list-item { list-style: none; }
+
+/* p inside li adds double spacing — strip its margin and keep the marker
+   aligned to the first text line. */
+.editor-container .toastui-editor-md-preview .toastui-editor-contents li > p { margin: 0; line-height: 1.7; }
+
+/* Nested lists collapse margin */
+.editor-container .toastui-editor-md-preview .toastui-editor-contents ol ul,
+.editor-container .toastui-editor-md-preview .toastui-editor-contents ul ol,
+.editor-container .toastui-editor-md-preview .toastui-editor-contents ul ul,
+.editor-container .toastui-editor-md-preview .toastui-editor-contents ol ol { margin: 0; }
+
+/* Task list */
+.editor-container .toastui-editor-md-preview .toastui-editor-contents ul[data-type="taskList"] { list-style: none; padding-left: 0; }
+.editor-container .toastui-editor-md-preview .toastui-editor-contents ul[data-type="taskList"] li { display: flex; align-items: flex-start; gap: 8px; margin: 0.3em 0; }
+.editor-container .toastui-editor-md-preview .toastui-editor-contents ul[data-type="taskList"] li > label { flex-shrink: 0; margin-top: 4px; }
+.editor-container .toastui-editor-md-preview .toastui-editor-contents ul[data-type="taskList"] li > div   { flex: 1; }
+
+/* ---------- Blockquote ---------- */
+.editor-container .toastui-editor-md-preview .toastui-editor-contents blockquote {
+  margin: 1.2em 0;
+  padding-left: 1.5em;
+  border-left: 5px solid rgba(0, 0, 0, 0.1);
+  color: rgba(0, 0, 0, 0.5);
+  font-style: italic;
+}
+
+/* ---------- Horizontal rule ---------- */
+.editor-container .toastui-editor-md-preview .toastui-editor-contents hr {
+  border: 0;
+  border-top: 1px solid rgba(128, 128, 128, 0.33);
+  margin: 2em 0;
+}
+
+/* ---------- Code (inline) ---------- */
+.editor-container .toastui-editor-md-preview .toastui-editor-contents code {
+  font-family: 'Roboto Mono', 'Lucida Sans Typewriter', 'Lucida Console', monaco, Courier, monospace;
+  font-size: 0.85em;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 3px;
+  padding: 2px 5px;
+}
+
+/* ---------- Code block (pre) ---------- */
+.editor-container .toastui-editor-md-preview .toastui-editor-contents pre {
+  margin: 1.2em 0;
+  padding: 1em 1.2em;
+  background: #f6f8fa;
+  color: #1f2328;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-family: 'Roboto Mono', 'Lucida Sans Typewriter', 'Lucida Console', monaco, Courier, monospace;
+  font-size: 0.85em;
+  line-height: 1.55;
+  -webkit-text-size-adjust: none;
+}
+
+.editor-container .toastui-editor-md-preview .toastui-editor-contents pre code {
+  background: none;
+  padding: 0;
+  border-radius: 0;
+  font-size: inherit;
+  color: inherit;
+}
+
+/* Syntax highlighting — StackEdit Prism palette (prism.scss) */
+.editor-container .toastui-editor-md-preview .toastui-editor-contents .hljs-comment,
+.editor-container .toastui-editor-md-preview .toastui-editor-contents .hljs-quote              { color: #708090; font-style: italic; }
+
+.editor-container .toastui-editor-md-preview .toastui-editor-contents .hljs-punctuation        { color: #999; }
+
+.editor-container .toastui-editor-md-preview .toastui-editor-contents .hljs-number,
+.editor-container .toastui-editor-md-preview .toastui-editor-contents .hljs-literal,
+.editor-container .toastui-editor-md-preview .toastui-editor-contents .hljs-boolean,
+.editor-container .toastui-editor-md-preview .toastui-editor-contents .hljs-built_in,
+.editor-container .toastui-editor-md-preview .toastui-editor-contents .hljs-symbol,
+.editor-container .toastui-editor-md-preview .toastui-editor-contents .hljs-deletion           { color: #905; }
+
+.editor-container .toastui-editor-md-preview .toastui-editor-contents .hljs-string,
+.editor-container .toastui-editor-md-preview .toastui-editor-contents .hljs-selector-attr,
+.editor-container .toastui-editor-md-preview .toastui-editor-contents .hljs-selector-pseudo,
+.editor-container .toastui-editor-md-preview .toastui-editor-contents .hljs-addition           { color: #690; }
+
+.editor-container .toastui-editor-md-preview .toastui-editor-contents .hljs-operator,
+.editor-container .toastui-editor-md-preview .toastui-editor-contents .hljs-link               { color: #a67f59; }
+
+.editor-container .toastui-editor-md-preview .toastui-editor-contents .hljs-keyword,
+.editor-container .toastui-editor-md-preview .toastui-editor-contents .hljs-selector-tag,
+.editor-container .toastui-editor-md-preview .toastui-editor-contents .hljs-attr               { color: #07a; }
+
+.editor-container .toastui-editor-md-preview .toastui-editor-contents .hljs-title,
+.editor-container .toastui-editor-md-preview .toastui-editor-contents .hljs-class .hljs-title,
+.editor-container .toastui-editor-md-preview .toastui-editor-contents .hljs-section,
+.editor-container .toastui-editor-md-preview .toastui-editor-contents .hljs-function           { color: #dd4a68; }
+
+.editor-container .toastui-editor-md-preview .toastui-editor-contents .hljs-variable,
+.editor-container .toastui-editor-md-preview .toastui-editor-contents .hljs-template-variable,
+.editor-container .toastui-editor-md-preview .toastui-editor-contents .hljs-regexp             { color: #e90; }
+
+/* ---------- Images ---------- */
+.editor-container .toastui-editor-md-preview .toastui-editor-contents img { max-width: 100%; margin: 1em 0; border-radius: 4px; }
+
+/* ---------- Tables ---------- */
+.editor-container .toastui-editor-md-preview .toastui-editor-contents table {
+  width: 100%;
+  margin: 0.3em 0;
+  border-collapse: collapse;
+  border-spacing: 0;
+  font-size: 0.95em;
+}
+.editor-container .toastui-editor-md-preview .toastui-editor-contents table td,
+.editor-container .toastui-editor-md-preview .toastui-editor-contents table th {
+  padding: 8px 12px;
+  border-right: 1px solid #dcdcdc;
+}
+.editor-container .toastui-editor-md-preview .toastui-editor-contents table th p,
+.editor-container .toastui-editor-md-preview .toastui-editor-contents table td p {
+  line-height: 1.2;
+  margin: 2px 0;
+}
+.editor-container .toastui-editor-md-preview .toastui-editor-contents table td:last-child,
+.editor-container .toastui-editor-md-preview .toastui-editor-contents table th:last-child { border-right: 0; }
+.editor-container .toastui-editor-md-preview .toastui-editor-contents table td  { border-top: 1px solid #dcdcdc; }
+/* .editor-container .toastui-editor-md-preview .toastui-editor-contents table th  {  text-align: left; } */
+
+/* ---------- Mark / Highlight ---------- */
+.editor-container .toastui-editor-md-preview .toastui-editor-contents mark {
+  background: #f8f840;
+  color: rgba(0, 0, 0, 0.8);
+  border-radius: 2px;
+  padding: 0 2px;
+}
+
+/* ---------- Mention ---------- */
+.editor-container .toastui-editor-md-preview .toastui-editor-contents .mention {
+  padding: 2px 6px;
+  background: #e0e7ff;
+  color: #3730a3;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+/* ---------- Block math ---------- */
+.editor-container .toastui-editor-md-preview .toastui-editor-contents [data-type="block-math"] {
+  margin: 1.2em 0;
+  padding: 0.75em 1em;
+  background: #f8fafc;
+  border-radius: 4px;
+  text-align: center;
+  border: 1px solid rgba(0, 0, 0, 0.07);
+}
+
+/* ---------- Iframe ---------- */
+.editor-container .toastui-editor-md-preview .toastui-editor-contents iframe {
+  max-width: 100%;
+  margin: 1em 0;
+  border: none;
+  border-radius: 6px;
+}
+
+/* ---------- Details / Summary ---------- */
+.editor-container .toastui-editor-md-preview .toastui-editor-contents details {
+  margin: 1.2em 0;
+  padding: 0.75em 1em;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+}
+.editor-container .toastui-editor-md-preview .toastui-editor-contents details summary {
+  cursor: pointer;
+  font-weight: 600;
+  user-select: none;
+}
+
+/* ---------- Keyboard shortcuts ---------- */
+.editor-container .toastui-editor-md-preview .toastui-editor-contents kbd {
+  font-family: Lato, "Helvetica Neue", Helvetica, sans-serif;
+  background: #fff;
+  border: 1px solid rgba(63, 63, 63, 0.25);
+  border-radius: 3px;
+  box-shadow: 0 1px 0 rgba(63, 63, 63, 0.25);
+  color: #333;
+  display: inline-block;
+  font-size: 0.8em;
+  margin: 0 0.1em;
+  padding: 0.1em 0.6em;
+  white-space: nowrap;
+}
+
+
+/* ============================================================================
+   Dark mode — .toastui-editor-dark (toggled on the editor by the theme button)
+   ============================================================================ */
+
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.editor-container .toastui-editor-dark .toastui-editor-md-preview { background: rgb(30, 30, 30); color: rgba(255, 255, 255, 0.8); }
+
+/* Headings */
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents h1,
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents h2,
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents h3,
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents h4,
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents h5,
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents h6 { color: rgba(255, 255, 255, 0.9); }
+
+/* .editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents h1::after,
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents h2::after { border-bottom-color: rgba(255, 255, 255, 0.12); } */
+
+/* Body */
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents p  { color: rgba(255, 255, 255, 0.8); }
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents strong { color: #fff; }
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents em     { color: rgba(255, 255, 255, 0.8); }
+
+/* Links */
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents a  { color: #60a5fa; }
+
+/* Lists */
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents ul,
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents ol,
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents li { color: rgba(255, 255, 255, 0.8); }
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents ul[data-type="taskList"] li > label,
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents ul[data-type="taskList"] li > div { color: rgba(255, 255, 255, 0.8); }
+
+/* Blockquote */
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents blockquote {
+  color: rgba(255, 255, 255, 0.45);
+  border-left-color: rgba(255, 255, 255, 0.12);
+}
+
+/* HR */
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents hr { border-top-color: rgba(255, 255, 255, 0.15); }
+
+/* Inline code */
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents code { background: rgba(255, 255, 255, 0.08); color: #e5e7eb; }
+
+/* Code block */
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents pre { background: #2d333b; color: #e5e7eb; border-color: #4b5563; }
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents pre code { color: #e5e7eb; background: none; }
+
+/* Syntax — brighter, dark-bg-friendly */
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents .hljs-keyword,
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents .hljs-built_in   { color: #ff7b72; }
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents .hljs-string     { color: #a5d6ff; }
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents .hljs-title,
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents .hljs-class,
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents .hljs-function   { color: #d2a8ff; }
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents .hljs-comment    { color: #8b949e; }
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents .hljs-number,
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents .hljs-literal    { color: #79c0ff; }
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents .hljs-attr,
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents .hljs-variable   { color: #e5e7eb; }
+
+/* Tables */
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents table td,
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents table th { color: #e5e7eb; border-color: #4b5563; }
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents table th { background: #2d333b; color: #f9fafb; }
+
+/* Mention */
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents .mention { background: #312e81; color: #c7d2fe; }
+
+/* Block math */
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents [data-type="block-math"] { background: #2d333b; color: #e5e7eb; border-color: #4b5563; }
+
+/* Details */
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents details       { border-color: #4b5563; color: rgba(255, 255, 255, 0.8); }
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents details summary { color: #f3f4f6; }
+
+/* Mark */
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents mark { background: #b45309; color: #fff; }
+
+/* Kbd */
+.editor-container .toastui-editor-dark .toastui-editor-md-preview .toastui-editor-contents kbd {
+  background: #2d333b;
+  border-color: #4b5563;
+  box-shadow: 0 1px 0 #4b5563;
+  color: #e5e7eb;
+}

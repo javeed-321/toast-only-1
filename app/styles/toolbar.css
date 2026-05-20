@@ -1,0 +1,58 @@
+/* ============================================================================
+   Custom toolbar (.my-toolbar). Hides Toast UI's built-in toolbar and styles
+   our own. The bar is dark in both light and dark themes, so the icons stay
+   light for contrast — no separate dark-mode block is needed.
+   ============================================================================ */
+
+/* Hide Toast UI's built-in toolbar (we render our own) */
+.editor-container .toastui-editor-toolbar,
+.editor-container .toastui-editor-defaultUI-toolbar {
+  display: none;
+}
+
+.editor-container .my-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  background: #2f2f33;
+  border-bottom: 1px solid #1f1f23;
+  height: 40px;
+  box-sizing: border-box;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.editor-container .my-toolbar button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.75);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, transform 0.08s ease;
+}
+
+.editor-container .my-toolbar button:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.editor-container .my-toolbar button:active {
+  transform: translateY(0);
+}
+
+/* Spacer pushes the buttons after it to the far right */
+.editor-container .my-toolbar__spacer {
+  flex: 1;
+}
+
+.editor-container .my-toolbar__theme {
+  color: rgba(255, 255, 255, 0.85);
+}
