@@ -1,7 +1,9 @@
 /* ============================================================================
    Custom toolbar (.my-toolbar). Hides Toast UI's built-in toolbar and styles
-   our own. The bar is dark in both light and dark themes, so the icons stay
-   light for contrast — no separate dark-mode block is needed.
+   our own. The toolbar (and the status bar in page.tsx) share the right
+   preview pane's surface so the whole UI stays on a 3-color palette:
+     light  surface #f3f3f3 · line #dcdcdc · text black/70
+     dark   surface #1e1e1e · line #3a3a3a · text white/70
    ============================================================================ */
 
 /* Hide Toast UI's built-in toolbar (we render our own) */
@@ -16,8 +18,8 @@
   align-items: center;
   gap: 4px;
   padding: 6px 10px;
-  background: #2f2f33;
-  border-bottom: 1px solid #1f1f23;
+  background: #f3f3f3;                 /* matches the preview pane */
+  border-bottom: 1px solid #dcdcdc;
   height: 40px;
   box-sizing: border-box;
   transition: background-color 0.2s ease, border-color 0.2s ease;
@@ -33,14 +35,14 @@
   border: none;
   border-radius: 6px;
   background: transparent;
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(0, 0, 0, 0.7);
   cursor: pointer;
   transition: background-color 0.15s ease, color 0.15s ease, transform 0.08s ease;
 }
 
 .editor-container .my-toolbar button:hover {
-  background: rgba(255, 255, 255, 0.12);
-  color: #ffffff;
+  background: rgba(0, 0, 0, 0.06);
+  color: rgba(0, 0, 0, 0.9);
   transform: translateY(-1px);
 }
 
@@ -54,5 +56,24 @@
 }
 
 .editor-container .my-toolbar__theme {
+  color: rgba(0, 0, 0, 0.8);
+}
+
+/* ---------- Dark — matches the preview pane's dark surface (#1e1e1e) ---------- */
+.dark .editor-container .my-toolbar {
+  background: #1e1e1e;
+  border-bottom-color: #3a3a3a;
+}
+
+.dark .editor-container .my-toolbar button {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.dark .editor-container .my-toolbar button:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+.dark .editor-container .my-toolbar__theme {
   color: rgba(255, 255, 255, 0.85);
 }

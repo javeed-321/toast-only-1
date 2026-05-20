@@ -1,14 +1,50 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-inter), system-ui, -apple-system, arial;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Consolas, monospace;
+  --font-heading: var(--font-inter), system-ui, -apple-system, arial;
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
 html, body {
@@ -16,15 +52,15 @@ html, body {
   padding: 0;
   height: 100vh;
   color: var(--foreground);
-  font-family: var(--font-lato), Lato, "Helvetica Neue", Helvetica, sans-serif;
+  font-family: var(--font-inter), system-ui, -apple-system, arial;
   font-size: 15px;
   font-variant-ligatures: common-ligatures;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--background);
-  background:red;
+  /* background:red; */
 }
-:root.dark { --background: #121212; --foreground: #ededed; }
+:root.dark { --background: #121212; --foreground: #f2f2f2; }
 
 /* Hide the page-level scrollbar while keeping the page scrollable. The editor's
    own inner scrollbars (scoped under .editor-container) are unaffected. */
@@ -37,4 +73,87 @@ body::-webkit-scrollbar {
   width: 0;
   height: 0;
   display: none;                /* Chrome / Safari */
+}
+
+:root {
+  /* Brand palette — light. Accent #3143e3 on a neutral grayscale base. */
+  --background: #ffffff;
+  --foreground: #1a1a1a;        /* heading */
+  --card: #ffffff;
+  --card-foreground: #1a1a1a;
+  --popover: #ffffff;
+  --popover-foreground: #1a1a1a;
+  --primary: #3143e3;           /* brand accent */
+  --primary-foreground: #ffffff;
+  --secondary: #eaeaea;
+  --secondary-foreground: #1a1a1a;
+  --muted: #f1f1f1;
+  --muted-foreground: #595959;  /* sub-text */
+  --accent: #f1f1f1;
+  --accent-foreground: #1a1a1a;
+  --destructive: #b3261e;
+  --border: #dadada;
+  --input: #dadada;
+  --ring: #3143e3;
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --radius: 0.625rem;
+  --sidebar: #f7f7f7;
+  --sidebar-foreground: #1a1a1a;
+  --sidebar-primary: #3143e3;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f1f1f1;
+  --sidebar-accent-foreground: #1a1a1a;
+  --sidebar-border: #dadada;
+  --sidebar-ring: #3143e3;
+}
+
+.dark {
+  /* Brand palette — dark. Accent #85a1ff on a near-black base. */
+  --background: #121212;
+  --foreground: #f2f2f2;        /* heading */
+  --card: #121212;
+  --card-foreground: #f2f2f2;
+  --popover: #121212;
+  --popover-foreground: #f2f2f2;
+  --primary: #85a1ff;           /* brand accent */
+  --primary-foreground: #121212;
+  --secondary: #2a2a2a;
+  --secondary-foreground: #f2f2f2;
+  --muted: #1f1f1f;
+  --muted-foreground: #9a9a9a;  /* sub-text */
+  --accent: #1f1f1f;
+  --accent-foreground: #f2f2f2;
+  --destructive: #ffc0c0;
+  --border: #3a3a3a;
+  --input: #3a3a3a;
+  --ring: #85a1ff;
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: #181818;
+  --sidebar-foreground: #f2f2f2;
+  --sidebar-primary: #85a1ff;
+  --sidebar-primary-foreground: #121212;
+  --sidebar-accent: #1f1f1f;
+  --sidebar-accent-foreground: #f2f2f2;
+  --sidebar-border: #3a3a3a;
+  --sidebar-ring: #85a1ff;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
 }

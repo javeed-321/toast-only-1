@@ -17,7 +17,7 @@ type ToolbarProps = {
   onExportPdf: () => void;
   handleRightPane: () => void;
 };
-
+const ICON_SIZE = 15;
 export default function Toolbar({
   exec,
   darkMode,
@@ -28,22 +28,23 @@ export default function Toolbar({
 }: ToolbarProps) {
   // The uniform formatting buttons. Add or remove one by editing this array.
   const buttons: { title: string; onClick: () => void; icon: ReactNode }[] = [
-    { title: "Bold",            onClick: () => exec("bold"),                                       icon: <Bold size={18} /> },
-    { title: "Italic",          onClick: () => exec("italic"),                                     icon: <Italic size={18} /> },
-    { title: "Strikethrough",   onClick: () => exec("strike"),                                     icon: <Strikethrough size={18} /> },
-    { title: "Heading 1",       onClick: () => exec("heading", { level: 1 }),                      icon: <Heading1 size={18} /> },
-    { title: "Heading 2",       onClick: () => exec("heading", { level: 2 }),                      icon: <Heading2 size={18} /> },
-    { title: "Horizontal rule", onClick: () => exec("hr"),                                         icon: <Minus size={18} /> },
-    { title: "Blockquote",      onClick: () => exec("blockQuote"),                                 icon: <Quote size={18} /> },
-    { title: "Bulleted list",   onClick: () => exec("bulletList"),                                 icon: <List size={18} /> },
-    { title: "Numbered list",   onClick: () => exec("orderedList"),                                icon: <ListOrdered size={18} /> },
-    { title: "Task list",       onClick: () => exec("taskList"),                                   icon: <ListChecks size={18} /> },
-    { title: "Inline code",     onClick: () => exec("code"),                                       icon: <Code size={18} /> },
-    { title: "Code block",      onClick: () => exec("codeBlock"),                                  icon: <Braces size={18} /> },
-    { title: "Link",            onClick: () => exec("addLink", { linkUrl: "https://", linkText: "link" }), icon: <Link size={18} /> },
-    { title: "Image",           onClick: () => exec("addImage", { imageUrl: "" }),                 icon: <Image size={18} /> },
-    { title: "Table",           onClick: () => exec("addTable", { rowCount: 3, columnCount: 3 }),  icon: <Table size={18} /> },
+    { title: "Bold",            onClick: () => exec("bold"),                                                 icon: <Bold size={ICON_SIZE} /> },
+    { title: "Italic",          onClick: () => exec("italic"),                                               icon: <Italic size={ICON_SIZE} /> },
+    { title: "Strikethrough",   onClick: () => exec("strike"),                                               icon: <Strikethrough size={ICON_SIZE} /> },
+    { title: "Heading 1",       onClick: () => exec("heading", { level: 1 }),                                icon: <Heading1 size={ICON_SIZE} /> },
+    { title: "Heading 2",       onClick: () => exec("heading", { level: 2 }),                                icon: <Heading2 size={ICON_SIZE} /> },
+    { title: "Horizontal rule", onClick: () => exec("hr"),                                                   icon: <Minus size={ICON_SIZE} /> },
+    { title: "Blockquote",      onClick: () => exec("blockQuote"),                                           icon: <Quote size={ICON_SIZE} /> },
+    { title: "Bulleted list",   onClick: () => exec("bulletList"),                                           icon: <List size={ICON_SIZE} /> },
+    { title: "Numbered list",   onClick: () => exec("orderedList"),                                          icon: <ListOrdered size={ICON_SIZE} /> },
+    { title: "Task list",       onClick: () => exec("taskList"),                                             icon: <ListChecks size={ICON_SIZE} /> },
+    { title: "Inline code",     onClick: () => exec("code"),                                                 icon: <Code size={ICON_SIZE} /> },
+    { title: "Code block",      onClick: () => exec("codeBlock"),                                            icon: <Braces size={ICON_SIZE} /> },
+    { title: "Link",            onClick: () => exec("addLink", { linkUrl: "https://", linkText: "link" }),   icon: <Link size={ICON_SIZE} /> },
+    { title: "Image",           onClick: () => exec("addImage", { imageUrl: "" }),                           icon: <Image size={ICON_SIZE} /> },
+    { title: "Table",           onClick: () => exec("addTable", { rowCount: 3, columnCount: 3 }),            icon: <Table size={ICON_SIZE} /> },
   ];
+
 
   return (
     <div className="my-toolbar">

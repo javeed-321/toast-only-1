@@ -58,7 +58,13 @@
 
 /* Light */
 .editor-container .toastui-editor-md-container .ProseMirror {
-  padding: 2px 30px 80px;
+  /* Same text box as the preview's .toastui-editor-contents — centered 750px
+     column with identical 30px side padding and 16px/80px vertical padding —
+     so the same line starts, wraps and scrolls at the same place in both panes.
+     (box-sizing: border-box is set on .ProseMirror below.) */
+  max-width: 750px;
+  margin: 0 auto;
+  padding: 16px 30px 80px;
   font-size: 15px;
   line-height: 1.7;
   font-family: Lato, "Helvetica Neue", Helvetica, sans-serif;
@@ -66,6 +72,12 @@
   font-variant-ligatures: common-ligatures;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Collapse the first block's top margin so its first line sits at the same
+   offset as the preview's collapsed first child (parity at the very top). */
+.editor-container .toastui-editor-md-container .ProseMirror > *:first-child {
+  margin-top: 0;
 }
 
 /* Dark — #121212 / white-80 */
