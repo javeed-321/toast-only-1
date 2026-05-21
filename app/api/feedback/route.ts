@@ -38,7 +38,11 @@ export async function POST(request: Request) {
   // SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY are set automatically by the Vercel
   // Supabase integration. The service-role key stays on the server only — it is
   // never sent to the browser — so it's safe to use it to insert here.
-  const url = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
+  // Trim any trailing slash — `https://x.supabase.co/` would otherwise produce
+  // `//rest/v1/feedback` and 404.
+  const url = (
+    process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL
+  )?.replace(/\/+$/, "");
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) {
     console.error(
