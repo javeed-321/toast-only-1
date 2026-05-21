@@ -27,6 +27,7 @@
   font-variant-ligatures: common-ligatures;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  border:0px solid yellow;
 }
 
 /* Mobile/tablet (< lg): tighten the preview's side gutters to match the
@@ -59,6 +60,7 @@
   line-height: 1.25;
   font-weight: 700;
   color: #1a1a1a;
+  color:#000c;
   letter-spacing: -0.011em;
   text-wrap: balance;       
 }

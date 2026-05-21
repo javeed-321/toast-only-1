@@ -12,49 +12,6 @@ type StatusBarProps = {
   onExportHtml: () => void;
   onExportPdf: () => void;
 };
-// export function exportPdf(options: ExportOptions): void {
-//   const fullHtml = buildStandaloneHtml(options);
-
-//   const iframe = document.createElement("iframe");
-//   iframe.style.position = "fixed";
-//   iframe.style.right = "0";
-//   iframe.style.bottom = "0";
-//   iframe.style.width = "0";
-//   iframe.style.height = "0";
-//   iframe.style.border = "0";
-//   document.body.appendChild(iframe);
-
-//   const doc = iframe.contentDocument || iframe.contentWindow?.document;
-//   if (!doc) {
-//     document.body.removeChild(iframe);
-//     return;
-//   }
-//   doc.open();
-//   doc.write(fullHtml);
-//   doc.close();
-
-//   const triggerPrint = () => {
-//     // Small delay to let CDN stylesheets (katex, hljs) finish applying.
-//     setTimeout(() => {
-//       try {
-//         iframe.contentWindow?.focus();
-//         iframe.contentWindow?.print();
-//       } finally {
-//         // Keep the iframe alive for a moment after print dialog opens,
-//         // some browsers need it. Then clean up.
-//         setTimeout(() => {
-//           if (iframe.parentNode) document.body.removeChild(iframe);
-//         }, 1500);
-//       }
-//     }, 400);
-//   };
-
-//   if (iframe.contentWindow?.document.readyState === "complete") {
-//     triggerPrint();
-//   } else {
-//     iframe.addEventListener("load", triggerPrint, { once: true });
-//   }
-// }
 
 export default function StatusBar({
   stats,
@@ -68,11 +25,11 @@ export default function StatusBar({
   // One bar per pane. On small screens they stack full-width (flex-col on the
   // wrapper) and are allowed to scroll sideways instead of clipping stats; from
   // `sm` up they split the width 50/50 and clip via overflow-hidden as before.
-  const STATUS_BAR =
-    "flex w-full sm:basis-1/2 sm:grow sm:shrink min-w-0 items-center h-7 px-3 box-border " +
+const STATUS_BAR =
+    "flex w-full sm:basis-1/2 sm:grow sm:shrink min-w-0 items-center h-10 px-3 box-border " +
     "overflow-x-auto sm:overflow-hidden whitespace-nowrap no-scrollbar " +
-    "select-none text-[11.5px] font-normal border-t bg-[#f3f3f3] border-[#dcdcdc] text-black/70 " +
-    "dark:bg-[#1e1e1e] dark:border-[#3a3a3a] dark:text-white/70";
+    "select-none text-[11.5px] font-normal border-t bg-[#f3f3f3] border-gray-100 text-black/70 " +
+    "dark:bg-[#1e1e1e] dark:border-transparent dark:text-white/70";
   const STATUS_LABEL =
     "shrink-0 text-black/80 font-semibold text-[11px] mr-1 dark:text-white/85";
   const STATUS_STAT =

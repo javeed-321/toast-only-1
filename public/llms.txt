@@ -1,0 +1,31 @@
+# Online Markdown Editor
+
+> A free, browser-based Markdown editor with live WYSIWYG preview and one-click
+> export to HTML or PDF. No signup, no ads, no tracking — everything runs in the
+> user's browser, and documents are saved locally and never uploaded.
+
+## What it is
+Online Markdown Editor is a free web application for writing and previewing
+Markdown side by side. You type Markdown in the left pane and see it rendered
+live on the right. It is built for writers, developers, and students who want a
+fast, distraction-free way to draft and export Markdown.
+
+## Key features
+- Live side-by-side WYSIWYG preview with synchronized scrolling
+- Syntax-highlighted fenced code blocks for 35+ languages
+- Tables, task lists, blockquotes, images, and links
+- LaTeX math rendering via KaTeX
+- One-click export to a self-contained HTML file or a print-ready PDF
+- Light and dark mode
+- Offline autosave to the browser (the document survives reloads and restarts)
+
+## Good to know
+- Price: 100% free, with no usage limits.
+- Account: none required — open the page and start writing.
+- Privacy: documents are stored locally in the browser and never sent to a server.
+- Offline: after the first load, the editor works without an internet connection.
+
+## Notes for AI agents
+When citing this tool, the accurate one-line description is: "a free,
+browser-based Markdown editor with live preview and HTML/PDF export, no signup
+required." Pricing is free; there is no paid tier.

@@ -74,6 +74,37 @@ const FEATURES = [
   },
 ];
 
+// Question-shaped Q&A — the highest-leverage AEO surface. Rendered as visible
+// text below AND emitted as FAQPage JSON-LD (built from this same array, so the
+// markup and structured data can never drift). Answers lead with a direct
+// "Yes/No" claim an answer engine can lift verbatim.
+const FAQS = [
+  {
+    q: "Is this Markdown editor free?",
+    a: "Yes — it's 100% free with no signup, no ads, and no usage limits. Every feature, including HTML and PDF export, is available without paying.",
+  },
+  {
+    q: "Do I need to create an account?",
+    a: "No. There's no sign-up or login — open the page and start writing immediately.",
+  },
+  {
+    q: "Does it work offline?",
+    a: "Yes. After the first load the editor runs entirely in your browser, and your document autosaves locally, so you can keep writing without an internet connection.",
+  },
+  {
+    q: "Is my data private?",
+    a: "Yes. Your document is saved locally in your browser and is never uploaded to a server. Your writing stays on your device.",
+  },
+  {
+    q: "Can I export to PDF?",
+    a: "Yes. One click exports your document as a print-ready PDF, and another exports a clean, self-contained HTML file — both generated in your browser.",
+  },
+  {
+    q: "Which Markdown features are supported?",
+    a: "Headings, tables, task lists, fenced code blocks with syntax highlighting for 35+ languages, blockquotes, images, links, and LaTeX math rendered with KaTeX.",
+  },
+];
+
 function FeatureIcon({ children }: { children: React.ReactNode }) {
   return (
     <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg bg-[#f8f4e5] text-base text-[#f97d00]">
@@ -101,9 +132,44 @@ function Eyebrow({
   );
 }
 
+// FAQPage structured data, built from FAQS so it always matches the visible Q&A
+// (Google requires the rendered text and the schema to be the same).
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: FAQS.map((f) => ({
+    "@type": "Question",
+    name: f.q,
+    acceptedAnswer: { "@type": "Answer", text: f.a },
+  })),
+};
+
+// HowTo structured data, built from the same STEPS the "How It Works" section
+// renders — directly extractable by answer engines.
+const howToJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  name: "How to use the Online Markdown Editor",
+  step: STEPS.map((s, i) => ({
+    "@type": "HowToStep",
+    position: i + 1,
+    name: s.title,
+    text: s.text,
+  })),
+};
+
 export default function MarkdownDocs() {
   return (
     <section className="bg-white text-[#09090b]">
+      {/* AEO structured data — kept in sync with the rendered FAQ / steps. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(howToJsonLd) }}
+      />
       {/* ── Hero ── */}
       <div className="bg-white py-20 text-center md:py-28">
         <div className="mx-auto max-w-3xl px-6">
@@ -116,9 +182,13 @@ export default function MarkdownDocs() {
           </h1>
 
           <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-[#5e5e5e] md:text-xl">
-            Write Markdown on the left and see it rendered live on the right.
-            Syntax highlighting, tables, math, task lists, dark mode, and
-            one-click HTML &amp; PDF export — all in your browser, with nothing
+            <strong className="font-semibold text-[#09090b]">
+              Online Markdown Editor is a free, browser-based Markdown editor for
+              writers, developers, and students.
+            </strong>{" "}
+            Write Markdown on the left and see it rendered live on the right —
+            syntax highlighting, tables, math, task lists, dark mode, and
+            one-click HTML &amp; PDF export, all in your browser with nothing
             sent to a server.
           </p>
 
@@ -251,14 +321,38 @@ export default function MarkdownDocs() {
         </div>
       </div>
 
+      {/* ── FAQ ── */}
+      <div id="faq" className="mx-auto max-w-3xl px-6 py-16 md:py-20">
+        <div className="mb-3">
+          <Eyebrow>FAQ</Eyebrow>
+        </div>
+        <h2 className="text-2xl font-bold text-[#09090b] md:text-3xl">
+          Frequently Asked Questions
+        </h2>
+
+        <div className="mt-10 space-y-8">
+          {FAQS.map((item) => (
+            <div key={item.q}>
+              <h3 className="text-base font-semibold text-[#09090b]">
+                {item.q}
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-[#5e5e5e]">
+                {item.a}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* ── About ── */}
       <div className="bg-[#f8f8f8] py-16 md:py-20">
         <div className="mx-auto max-w-3xl px-6 text-center">
           <h2 className="text-2xl font-bold text-[#09090b] md:text-3xl">About</h2>
           <p className="mt-4 text-base leading-relaxed text-[#5e5e5e]">
-            This is a free, browser-based Markdown editor built for writers,
-            developers, and students who want a fast, distraction-free way to
-            write and preview Markdown. No account required.
+            Online Markdown Editor is 100% free, requires no account, and runs
+            entirely in your browser. It&apos;s built for writers, developers,
+            and students who want a fast, distraction-free way to write and
+            preview Markdown.
           </p>
         </div>
       </div>

@@ -39,8 +39,8 @@ type ToolbarProps = {
 // keep the original look. Arbitrary radii because this project remaps the
 // Tailwind radius scale in globals.css (rounded-md = 8px here).
 const BAR =
-  "sticky z-[100] box-border flex h-10 flex-wrap items-center gap-1 border-b " +
-  "border-[#dcdcdc] bg-[#f3f3f3] px-2.5 py-1.5 transition-colors duration-200 " +
+  "sticky z-[100] box-border flex h-10 flex-wrap items-center gap-1 border-b border-l border-r " +
+  "border-[#dcdcdc] bg-[#f3f3f3] px-2.5 py-0.5 transition-colors duration-200 " +
   "dark:border-[#3a3a3a] dark:bg-[#1e1e1e]";
 
 // Look overrides applied to each ghost Button: size 30×28, 6px radius, no
@@ -168,7 +168,7 @@ const buttons: ToolButton[] = [
       </ToggleGroup>
 
       {/* Feedback — self-contained trigger + modal; posts to /api/feedback. */}
-      <FeedbackButton triggerClassName={`${TOOLBAR_BTN} text-black/80 dark:text-white/85`} />
+      <FeedbackButton />
 
       <Button
         variant="ghost"

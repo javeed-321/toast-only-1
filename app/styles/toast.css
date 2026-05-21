@@ -58,13 +58,17 @@
 
 /* Light */
 .editor-container .toastui-editor-md-container .ProseMirror {
-  /* Same text box as the preview's .toastui-editor-contents — centered 750px
-     column with identical 30px side padding and 16px/80px vertical padding —
-     so the same line starts, wraps and scrolls at the same place in both panes.
-     (box-sizing: border-box is set on .ProseMirror below.) */
-  max-width: 750px;
-  margin: 0 auto;
-  padding: 16px 30px 80px;
+  /* Mirror the preview pane EXACTLY for scrollbar parity. The preview's scroller
+     (.toastui-editor-md-preview) is full pane width, so its scrollbar sits flush
+     at the right edge; the 750px reading column is centered by an inner element.
+     Here .ProseMirror is itself the scroller, so it must stay full-width too —
+     otherwise (with max-width + auto margins) the scroller shrinks and the
+     scrollbar floats inward, leaving a gap on its right.
+     We keep the centered 750px column via responsive side padding instead:
+     padding-x = max(30px, half the leftover width). */
+  max-width: none;
+  margin: 0;
+  padding: 16px max(30px, calc((100% - 750px) / 2)) 80px;
   font-size: 15px;
   line-height: 1.7;
   font-family: Lato, "Helvetica Neue", Helvetica, sans-serif;
@@ -91,10 +95,31 @@
   color: rgba(255, 255, 255, 0.8);
 }
 
+/* ---------- Editor frame + pane divider (recolored to our chrome palette) ----------
+   Toast UI ships these colors in its own CSS (node_modules):
+     · outer frame  → .toastui-editor-defaultUI border (#dadde6 / dark #494c56)
+     · pane divider → the 1px .toastui-editor-md-splitter between the markdown and
+                      preview panes (#ebedf2 / dark #303238)
+   Re-point both to the toolbar/status-bar palette (#dcdcdc / #3a3a3a) so every
+   line in the editor matches. No new hues. Loaded after Toast's CSS, so equal-
+   or-higher specificity here wins. */
+.editor-container .toastui-editor-defaultUI {
+  border-color: #dcdcdc;
+}
+.editor-container .toastui-editor-main .toastui-editor-md-splitter {
+  background-color: #dcdcdc;
+}
+.editor-container .toastui-editor-dark.toastui-editor-defaultUI {
+  border-color: #3a3a3a;
+}
+.editor-container .toastui-editor-dark .toastui-editor-main .toastui-editor-md-splitter {
+  background-color: #3a3a3a;
+}
+
 /* ---------- Scrollbars (gray rounded thumb, transparent track) ---------- */
 .editor-container ::-webkit-scrollbar {
-  width: 10px !important;
-  height: 80px !important;
+  width: 6px !important;
+  height: 6px !important;
 }
 
 .editor-container ::-webkit-scrollbar-track {
@@ -154,20 +179,27 @@
 .editor-container .toastui-editor-md-container
   .toastui-editor-md-code-block-line-background.start {
     padding-top: 2px;
-  border-top: 1px solid #d0d7de;
+  /* border-top: 1px solid #d0d7de;
   border-top-left-radius: 6px;
-  border-top-right-radius: 6px;
+  border-top-right-radius: 6px; */
 }
 
 /* Closing fence: has a ``` delimiter inside, and isn't the opening (.start). */
 .editor-container .toastui-editor-md-container
   .toastui-editor-md-code-block-line-background:not(.start):has(.toastui-editor-md-delimiter) {
-  border-bottom: 1px solid #d0d7de;
+  /* border-bottom: 1px solid #d0d7de;
   border-bottom-left-radius: 6px;
-  border-bottom-right-radius: 6px;
+  border-bottom-right-radius: 6px; */
   margin-bottom: 10px;
 }
 
+
+
+
+.editor-container  .toastui-editor-dark.toastui-editor-defaultUI
+{
+  background: red !important;
+}
 /* ============================================================================
    Responsive — tablet & mobile (< lg / 1024px): show ONE pane at a time.
    Toast UI's vertical split puts the markdown editor and the preview side by

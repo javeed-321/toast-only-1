@@ -117,30 +117,60 @@ export const viewport: Viewport = {
   ],
 };
 
-// Structured data (Schema.org SoftwareApplication) so search engines can show
-// rich results — app category, price (free), and platform. Rendered as a
-// JSON-LD <script> in <body>; values stay in sync with the metadata above.
+// Structured data (Schema.org) so search engines and answer engines can show
+// rich results and cite the page confidently. Rendered as a JSON-LD <script> in
+// <body>; values stay in sync with the metadata above. A @graph with three
+// cross-linked nodes models the entity properly:
+//   • Organization — the publisher behind the app
+//   • WebSite       — the site itself
+//   • SoftwareApplication/WebApplication — the product (free, browser-based)
+// No aggregateRating: we have no genuine, verifiable ratings, and fabricating
+// review counts is both a policy violation and a manual-action risk.
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  name: "Online Markdown Editor",
-  description,
-  url: siteUrl,
-  applicationCategory: "Editor",
-  operatingSystem: "Any (web browser)",
-  browserRequirements: "Requires JavaScript and a modern web browser.",
-  offers: {
-    "@type": "Offer",
-    price: "0",
-    priceCurrency: "USD",
-  },
-  featureList: [
-    "Live WYSIWYG Markdown preview",
-    "Offline autosave",
-    "Export to HTML",
-    "Export to PDF",
-    "Syntax-highlighted code blocks",
-    "No signup, no ads, no tracking",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${siteUrl}/#organization`,
+      name: "Online Markdown Editor",
+      url: siteUrl,
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${siteUrl}/#website`,
+      name: "Online Markdown Editor",
+      url: siteUrl,
+      description,
+      inLanguage: "en-US",
+      publisher: { "@id": `${siteUrl}/#organization` },
+    },
+    {
+      // Dual type: it's a desktop-class application (SoftwareApplication) that
+      // happens to run in the browser (WebApplication). Engines understand both.
+      "@type": ["SoftwareApplication", "WebApplication"],
+      "@id": `${siteUrl}/#app`,
+      name: "Online Markdown Editor",
+      description,
+      url: siteUrl,
+      applicationCategory: "Editor",
+      operatingSystem: "Any (web browser)",
+      browserRequirements: "Requires JavaScript and a modern web browser.",
+      isPartOf: { "@id": `${siteUrl}/#website` },
+      publisher: { "@id": `${siteUrl}/#organization` },
+      offers: {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "USD",
+      },
+      featureList: [
+        "Live WYSIWYG Markdown preview",
+        "Offline autosave",
+        "Export to HTML",
+        "Export to PDF",
+        "Syntax-highlighted code blocks",
+        "No signup, no ads, no tracking",
+      ],
+    },
   ],
 };
 
@@ -166,6 +196,14 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        {/* Tally embed — scans for data-tally-* attributes (see FeedbackButton)
+            and opens the feedback popup on click. Loads after hydration, by which
+            point the Feedback button is in the DOM for Tally to bind. */}
+        <Script
+          id="tally-embed"
+          src="https://tally.so/widgets/embed.js"
+          strategy="afterInteractive"
         />
         <Providers>{children}</Providers>
         {/* Bottom-right "Add to home screen?" toast (Chromium installable). */}
