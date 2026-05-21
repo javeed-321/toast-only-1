@@ -20,6 +20,7 @@ import { getMarkdownStats } from "./lib/markdown-stats";
 import { useCursorPosition } from "./hooks/useCursorPosition";
 import StatusBar from "./components/StatusBar";
 import ScrollToggle from "./components/ScrollToggle";
+import { Skeleton } from "@/components/ui/skeleton";
 import { exportHtml, exportPdf } from "./lib/utils";
 import { useAppDispatch, useAppSelector } from "./store/hooks";
 import { setBody } from "./store/docSlice";
@@ -44,34 +45,22 @@ const Editor = dynamic(
 
 // Lightweight placeholder shown in the editor pane while the editor bundle and
 // highlight plugin load, so the area isn't blank on refresh. A few shimmering
-// lines in the editor surface palette — no branded splash.
+// lines in the editor surface palette — no branded splash. Uses shadcn Skeleton
+// (its base `bg-accent`/`rounded-md` are overridden here to keep the original
+// faint black/white lines and 4px radius).
 function EditorSkeleton() {
   return (
     <div className="absolute inset-0 z-10 flex flex-col gap-3 p-6 bg-white dark:bg-[#1e1e1e]">
       {[92, 70, 84, 60, 78, 45].map((w, i) => (
-        <div
+        <Skeleton
           key={i}
-          className="h-3.5 rounded animate-pulse bg-black/10 dark:bg-white/10"
+          className="h-3.5 rounded bg-black/10 dark:bg-white/10"
           style={{ width: `${w}%` }}
         />
       ))}
     </div>
   );
 }
-
-// Status-bar styling (was status-bar.css). Dark mode keys off `.dark` on <html>
-// via the `dark:` variant, so no per-state prop class is needed.
-// Shares the preview pane's 3-color palette (surface #f3f3f3/#1e1e1e,
-// line #dcdcdc/#3a3a3a, text black/white) — no extra hues introduced.
-const STATUS_BAR =
-  "flex grow shrink basis-1/2 min-w-0 items-center h-7 px-3 box-border overflow-hidden " +
-  "select-none text-[11.5px] font-normal border-t bg-[#f3f3f3] border-[#dcdcdc] text-black/70 " +
-  "dark:bg-[#1e1e1e] dark:border-[#3a3a3a] dark:text-white/70";
-// First span = pane label (same text color, just heavier).
-const STATUS_LABEL = "text-black/80 font-semibold text-[11px] mr-1 dark:text-white/85";
-// Every following span gets a "|" separator before it (uses the line color).
-const STATUS_STAT =
-  "before:content-['|'] before:mx-2 before:font-light before:text-[#dcdcdc] dark:before:text-[#3a3a3a]";
 
 export default function EditorPage() {
   const tuiRef = useRef<any>(null);

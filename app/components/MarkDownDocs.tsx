@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { badgeVariants } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 
 // Static, server-rendered content below the editor.
@@ -231,7 +232,8 @@ export default function MarkdownDocs() {
       </div>
 
       {/* ── Footer ── */}
-      <footer className="border-t border-border py-8 text-center text-sm text-muted-foreground">
+      <Separator />
+      <footer className="py-8 text-center text-sm text-muted-foreground">
         <p>© {new Date().getFullYear()} Markdown Editor. All rights reserved.</p>
       </footer>
     </section>

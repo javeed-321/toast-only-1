@@ -1,6 +1,7 @@
 "use client";
 
 import { FileCode, FileText } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { exportPdf } from "../lib/utils";
 
 type StatusBarProps = {
@@ -77,14 +78,14 @@ export default function StatusBar({
   const STATUS_STAT =
     "shrink-0 before:content-['|'] before:mx-2 before:font-light before:text-[#dcdcdc] dark:before:text-[#3a3a3a]";
 
-  // Compact text-button — lives inside the h-7 bar without breaking rhythm.
-  // Same three-color palette as the rest of the status bar (no new hues),
-  // just a faint hover wash for affordance.
+  // Compact text-button (shadcn ghost Button) — lives inside the h-7 bar without
+  // breaking rhythm. These classes are merged last so they override the ghost
+  // variant's defaults, keeping the original look: 20px tall, 4px radius, the
+  // status bar's faint hover wash. No new hues.
   const STATUS_BUTTON =
-    "inline-flex items-center gap-1 h-5 px-2 rounded text-[11px] font-medium " +
+    "h-5 gap-1 rounded-[4px] px-2 text-[11px] font-medium " +
     "text-black/75 hover:bg-black/5 hover:text-black/90 " +
-    "dark:text-white/75 dark:hover:bg-white/10 dark:hover:text-white/95 " +
-    "transition-colors";
+    "dark:text-white/75 dark:hover:bg-white/10 dark:hover:text-white/95";
 
   return (
     <div className="flex flex-col sm:flex-row shrink-0">
@@ -109,24 +110,26 @@ export default function StatusBar({
             bar; shrink-0 keeps them visible if the bar gets crowded (the
             stats spans will get clipped by overflow-hidden first instead). */}
         <div className="ml-auto flex items-center gap-1 shrink-0 pl-2">
-          <button
+          <Button
+            variant="ghost"
             className={STATUS_BUTTON}
             onClick={onExportHtml}
             title="Export as HTML"
             aria-label="Export as HTML"
           >
-            <FileCode size={12} />
+            <FileCode className="size-[12px]" />
             <span className="hidden min-[420px]:inline">Export HTML</span>
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="ghost"
             className={STATUS_BUTTON}
             onClick={onExportPdf}
             title="Export as PDF"
             aria-label="Export as PDF"
           >
-            <FileText size={12} />
+            <FileText className="size-[12px]" />
             <span className="hidden min-[420px]:inline">Export PDF</span>
-          </button>
+          </Button>
         </div>
       </div>
     </div>

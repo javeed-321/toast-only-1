@@ -1,13 +1,20 @@
 "use client";
 
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useState } from "react";
 import {
   Bold, Italic,Strikethrough,  Heading1,  Heading2,  Minus,  Quote,  List,  ListOrdered,  ListChecks,  Code,  Braces,  Link,  Image,  Table,  Sun,  Moon,
   Eye,
   Pencil,
   MoreHorizontal,
-  X,
 } from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Exec = (cmd: string, payload?: Record<string, any>) => void;
@@ -24,7 +31,26 @@ type ToolbarProps = {
   mobileView: MobileView;
   onMobileView: (view: MobileView) => void;
 };
-const ICON_SIZE = 14;
+
+// Bar surface: shares the preview pane's palette (#f3f3f3 / #1e1e1e dark), 40px,
+// sticky. Buttons below are shadcn <Button variant="ghost">; these classes are
+// merged last (tailwind-merge) so they override the ghost variant's defaults and
+// keep the original look. Arbitrary radii because this project remaps the
+// Tailwind radius scale in globals.css (rounded-md = 8px here).
+const BAR =
+  "sticky z-[100] box-border flex h-10 flex-wrap items-center gap-1 border-b " +
+  "border-[#dcdcdc] bg-[#f3f3f3] px-2.5 py-1.5 transition-colors duration-200 " +
+  "dark:border-[#3a3a3a] dark:bg-[#1e1e1e]";
+
+// Look overrides applied to each ghost Button: size 30×28, 6px radius, no
+// padding, the toolbar's faint hover wash + lift. Display & idle color are added
+// per-button (the theme toggle uses a slightly darker idle color).
+const TOOLBAR_BTN =
+  "h-7 w-[30px] cursor-pointer rounded-[6px] p-0 " +
+  "transition-[background-color,color,transform] duration-150 " +
+  "hover:-translate-y-px hover:bg-black/[0.06] hover:text-black/90 active:translate-y-0 " +
+  "dark:hover:bg-white/[0.12] dark:hover:text-white";
+const TOOLBAR_IDLE = "text-black/70 dark:text-white/70";
 
 type ToolButton = {
   title: string;
@@ -45,35 +71,30 @@ export default function Toolbar({
 }: ToolbarProps) {
   // Whether the "more" sheet (the three-dots overflow menu) is open. Only ever
   // visible below `lg` — on desktop every button sits inline so it's never used.
+  // Backdrop, focus trap and Escape-to-close are handled by the shadcn Sheet.
   const [moreOpen, setMoreOpen] = useState(false);
-
-  // Close the sheet on Escape for keyboard users.
-  useEffect(() => {
-    if (!moreOpen) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setMoreOpen(false);
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [moreOpen]);
 
   // Single ordered list — same order as before, so the desktop bar is unchanged.
   // `primary` marks the few that also stay visible on tablet/mobile; the rest
   // collapse into the three-dots sheet there (and stay inline on lg+).
+  // Icons carry an explicit `size-[14px]` class so shadcn's Button cva (which
+  // forces unclassed svgs to size-4 / 16px) leaves their size alone.
   const buttons: ToolButton[] = [
-    { title: "Bold",            onClick: () => exec("bold"),                                                 icon: <Bold size={ICON_SIZE} />,          primary: true },
-    { title: "Italic",          onClick: () => exec("italic"),                                               icon: <Italic size={ICON_SIZE} />,        primary: true },
-    { title: "Strikethrough",   onClick: () => exec("strike"),                                               icon: <Strikethrough size={ICON_SIZE} /> },
-    { title: "Heading 1",       onClick: () => exec("heading", { level: 1 }),                                icon: <Heading1 size={ICON_SIZE} />,      primary: true },
-    { title: "Heading 2",       onClick: () => exec("heading", { level: 2 }),                                icon: <Heading2 size={ICON_SIZE} /> },
-    { title: "Horizontal rule", onClick: () => exec("hr"),                                                   icon: <Minus size={ICON_SIZE} /> },
-    { title: "Blockquote",      onClick: () => exec("blockQuote"),                                           icon: <Quote size={ICON_SIZE} /> },
-    { title: "Bulleted list",   onClick: () => exec("bulletList"),                                           icon: <List size={ICON_SIZE} />,          primary: true },
-    { title: "Numbered list",   onClick: () => exec("orderedList"),                                          icon: <ListOrdered size={ICON_SIZE} /> },
-    { title: "Task list",       onClick: () => exec("taskList"),                                             icon: <ListChecks size={ICON_SIZE} /> },
-    { title: "Inline code",     onClick: () => exec("code"),                                                 icon: <Code size={ICON_SIZE} />,          primary: true },
-    { title: "Code block",      onClick: () => exec("codeBlock"),                                            icon: <Braces size={ICON_SIZE} /> },
-    { title: "Link",            onClick: () => exec("addLink", { linkUrl: "https://", linkText: "link" }),   icon: <Link size={ICON_SIZE} /> },
-    { title: "Image",           onClick: () => exec("addImage", { imageUrl: "" }),                           icon: <Image size={ICON_SIZE} /> },
-    { title: "Table",           onClick: () => exec("addTable", { rowCount: 3, columnCount: 3 }),            icon: <Table size={ICON_SIZE} /> },
+    { title: "Bold",            onClick: () => exec("bold"),                                                 icon: <Bold className="size-[14px]" />,          primary: true },
+    { title: "Italic",          onClick: () => exec("italic"),                                               icon: <Italic className="size-[14px]" />,        primary: true },
+    { title: "Strikethrough",   onClick: () => exec("strike"),                                               icon: <Strikethrough className="size-[14px]" /> },
+    { title: "Heading 1",       onClick: () => exec("heading", { level: 1 }),                                icon: <Heading1 className="size-[14px]" />,      primary: true },
+    { title: "Heading 2",       onClick: () => exec("heading", { level: 2 }),                                icon: <Heading2 className="size-[14px]" /> },
+    { title: "Horizontal rule", onClick: () => exec("hr"),                                                   icon: <Minus className="size-[14px]" /> },
+    { title: "Blockquote",      onClick: () => exec("blockQuote"),                                           icon: <Quote className="size-[14px]" /> },
+    { title: "Bulleted list",   onClick: () => exec("bulletList"),                                           icon: <List className="size-[14px]" />,          primary: true },
+    { title: "Numbered list",   onClick: () => exec("orderedList"),                                          icon: <ListOrdered className="size-[14px]" /> },
+    { title: "Task list",       onClick: () => exec("taskList"),                                             icon: <ListChecks className="size-[14px]" /> },
+    { title: "Inline code",     onClick: () => exec("code"),                                                 icon: <Code className="size-[14px]" />,          primary: true },
+    { title: "Code block",      onClick: () => exec("codeBlock"),                                            icon: <Braces className="size-[14px]" /> },
+    { title: "Link",            onClick: () => exec("addLink", { linkUrl: "https://", linkText: "link" }),   icon: <Link className="size-[14px]" /> },
+    { title: "Image",           onClick: () => exec("addImage", { imageUrl: "" }),                           icon: <Image className="size-[14px]" /> },
+    { title: "Table",           onClick: () => exec("addTable", { rowCount: 3, columnCount: 3 }),            icon: <Table className="size-[14px]" /> },
   ];
 
   // The non-primary buttons, in order — these populate the three-dots sheet.
@@ -81,132 +102,125 @@ export default function Toolbar({
 
   return (
     <>
-    <div className="my-toolbar">
-      {/* Formatting buttons — same order/markup as before on desktop. Non-primary
-          ones carry `tb-lg-only`, which the CSS hides below lg (they live in the
-          sheet there). Visibility is done in CSS, not Tailwind utilities, because
-          the `.my-toolbar button` rule out-specifies a utility like `hidden`. */}
+    <div className={BAR}>
+      {/* Formatting buttons — same order as before. Primary ones are always
+          inline; the rest are inline only from lg up (below lg they live in the
+          three-dots sheet). */}
       {buttons.map((b, i) => (
-        <button
+        <Button
           key={i}
+          variant="ghost"
           title={b.title}
           aria-label={b.title}
           onClick={b.onClick}
-          className={b.primary ? undefined : "tb-lg-only"}
+          className={`${b.primary ? "" : "hidden lg:inline-flex"} ${TOOLBAR_BTN} ${TOOLBAR_IDLE}`}
         >
           {b.icon}
-        </button>
+        </Button>
       ))}
 
       {/* Three-dots overflow — opens the sheet. Hidden once everything fits (lg+). */}
-      <button
-        className="tb-mobile-only"
+      <Button
+        variant="ghost"
+        className={`lg:hidden ${TOOLBAR_BTN} ${TOOLBAR_IDLE}`}
         title="More tools"
         aria-label="More tools"
         aria-haspopup="dialog"
         aria-expanded={moreOpen}
         onClick={() => setMoreOpen(true)}
       >
-        <MoreHorizontal size={ICON_SIZE} />
-      </button>
+        <MoreHorizontal className="size-[14px]" />
+      </Button>
 
       {/* Pushes everything after it to the far right. */}
-      <span className="my-toolbar__spacer" />
+      <span className="flex-1" />
 
-      {/* Compact edit/preview switch — one pane at a time on tablet & mobile. */}
-      <div className="my-toolbar__segment tb-mobile-only">
-        <button
+      {/* Compact edit/preview switch — one pane at a time on tablet & mobile.
+          shadcn ToggleGroup (single-select); the pressed item gets the surface
+          color so it reads as a pressed tab. */}
+      <ToggleGroup
+        value={[mobileView]}
+        onValueChange={(vals) => {
+          const next = vals[0] as MobileView | undefined;
+          if (next) onMobileView(next);
+        }}
+        className="gap-0.5 rounded-[8px] bg-black/5 p-0.5 lg:hidden dark:bg-white/[0.08]"
+      >
+        <ToggleGroupItem
+          value="edit"
           title="Show editor"
           aria-label="Show editor"
-          aria-pressed={mobileView === "edit"}
-          data-active={mobileView === "edit"}
-          onClick={() => onMobileView("edit")}
+          className="h-7 w-[30px] min-w-0 cursor-pointer rounded-[6px] p-0 text-black/70 hover:bg-black/[0.06] hover:text-black/90 data-[pressed]:bg-white data-[pressed]:text-black/90 dark:text-white/70 dark:hover:bg-white/[0.12] dark:hover:text-white dark:data-[pressed]:bg-[#3a3a3a] dark:data-[pressed]:text-white"
         >
-          <Pencil size={ICON_SIZE} />
-        </button>
-        <button
+          <Pencil className="size-[14px]" />
+        </ToggleGroupItem>
+        <ToggleGroupItem
+          value="preview"
           title="Show preview"
           aria-label="Show preview"
-          aria-pressed={mobileView === "preview"}
-          data-active={mobileView === "preview"}
-          onClick={() => onMobileView("preview")}
+          className="h-7 w-[30px] min-w-0 cursor-pointer rounded-[6px] p-0 text-black/70 hover:bg-black/[0.06] hover:text-black/90 data-[pressed]:bg-white data-[pressed]:text-black/90 dark:text-white/70 dark:hover:bg-white/[0.12] dark:hover:text-white dark:data-[pressed]:bg-[#3a3a3a] dark:data-[pressed]:text-white"
         >
-          <Eye size={ICON_SIZE} />
-        </button>
-      </div>
+          <Eye className="size-[14px]" />
+        </ToggleGroupItem>
+      </ToggleGroup>
 
-      <button
-        className="my-toolbar__theme"
+      <Button
+        variant="ghost"
+        className={`${TOOLBAR_BTN} text-black/80 dark:text-white/85`}
         title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
         aria-label="Toggle dark mode"
         onClick={onToggleTheme}
       >
-        {darkMode ? <Sun size={18} /> : <Moon size={18} />}
-      </button>
+        {darkMode ? <Sun className="size-[18px]" /> : <Moon className="size-[18px]" />}
+      </Button>
 
       {/* Desktop split toggle — only meaningful when both panes share the screen. */}
-      <button
+      <Button
+        variant="ghost"
         onClick={handleRightPane}
         aria-label="Toggle right pane"
         title="Toggle right pane"
-        className="tb-lg-only"
+        className={`hidden lg:inline-flex ${TOOLBAR_BTN} ${TOOLBAR_IDLE}`}
       >
-        <Eye size={18} />
-      </button>
+        <Eye className="size-[18px]" />
+      </Button>
     </div>
 
-      {/* ── Overflow sheet (tablet / mobile only). Rendered OUTSIDE .my-toolbar so
-          the `.my-toolbar button` sizing rule doesn't shrink its labeled rows. */}
-      {moreOpen && (
-        <div
-          className="fixed inset-0 z-[200] lg:hidden"
-          role="dialog"
-          aria-modal="true"
-          aria-label="More tools"
+      {/* ── Overflow sheet (tablet / mobile only) ──
+          shadcn Sheet (a Base UI dialog) as a bottom sheet. It owns the
+          backdrop, focus trap and Escape handling. lg:hidden on the content
+          keeps it off the desktop, where the three-dots trigger isn't shown. */}
+      <Sheet open={moreOpen} onOpenChange={setMoreOpen}>
+        <SheetContent
+          side="bottom"
+          className="rounded-t-2xl border-[#dcdcdc] bg-[#f3f3f3] pb-6 lg:hidden dark:border-[#3a3a3a] dark:bg-[#1e1e1e]"
         >
-          {/* Backdrop */}
-          <div
-            className="absolute inset-0 bg-black/40"
-            onClick={() => setMoreOpen(false)}
-          />
-          {/* Bottom sheet — same 3-color palette as the rest of the chrome. */}
-          <div
-            className="absolute inset-x-0 bottom-0 rounded-t-2xl border-t bg-[#f3f3f3] border-[#dcdcdc] p-4 pb-6 shadow-xl dark:bg-[#1e1e1e] dark:border-[#3a3a3a] sm:inset-x-auto sm:right-4 sm:bottom-4 sm:w-80 sm:rounded-2xl sm:border"
-          >
-            <div className="mb-3 flex items-center justify-between">
-              <span className="text-[13px] font-semibold text-black/80 dark:text-white/85">
-                More tools
-              </span>
-              <button
-                onClick={() => setMoreOpen(false)}
-                aria-label="Close"
-                title="Close"
-                className="flex h-7 w-7 items-center justify-center rounded-md text-black/60 hover:bg-black/5 hover:text-black/90 dark:text-white/60 dark:hover:bg-white/10 dark:hover:text-white/95"
-              >
-                <X size={16} />
-              </button>
-            </div>
+          <SheetHeader className="pb-0">
+            <SheetTitle className="text-[13px] font-semibold text-black/80 dark:text-white/85">
+              More tools
+            </SheetTitle>
+          </SheetHeader>
 
-            <div className="grid grid-cols-2 gap-1.5">
-              {more.map((b, i) => (
-                <button
-                  key={i}
-                  onClick={() => {
-                    b.onClick();
-                    setMoreOpen(false);
-                  }}
-                  title={b.title}
-                  aria-label={b.title}
-                  className="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-[13px] font-medium text-black/75 hover:bg-black/5 hover:text-black/90 dark:text-white/75 dark:hover:bg-white/10 dark:hover:text-white/95"
-                >
-                  {b.icon}
-                  <span className="truncate">{b.title}</span>
-                </button>
-              ))}
-            </div>
+          <div className="grid grid-cols-2 gap-1.5 px-4 pb-2">
+            {more.map((b, i) => (
+              <Button
+                key={i}
+                variant="ghost"
+                onClick={() => {
+                  b.onClick();
+                  setMoreOpen(false);
+                }}
+                title={b.title}
+                aria-label={b.title}
+                className="h-auto justify-start gap-2.5 rounded-lg px-3 py-2.5 text-[13px] font-medium text-black/75 hover:bg-black/5 hover:text-black/90 dark:text-white/75 dark:hover:bg-white/10 dark:hover:text-white/95"
+              >
+                {b.icon}
+                <span className="truncate">{b.title}</span>
+              </Button>
+            ))}
           </div>
-        </div>
-      )}
+        </SheetContent>
+      </Sheet>
     </>
   );
 }

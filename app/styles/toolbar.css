@@ -1,126 +1,15 @@
 /* ============================================================================
-   Custom toolbar (.my-toolbar). Hides Toast UI's built-in toolbar and styles
-   our own. The toolbar (and the status bar in page.tsx) share the right
-   preview pane's surface so the whole UI stays on a 3-color palette:
-     light  surface #f3f3f3 · line #dcdcdc · text black/70
-     dark   surface #1e1e1e · line #3a3a3a · text white/70
+   Toolbar styling now lives inline as Tailwind classes in components/Toolbar.tsx
+   (the bar, its buttons, the edit/preview segment, dark variants and responsive
+   show/hide all moved there).
+
+   The only rule that can't be a Tailwind class is below: it targets Toast UI's
+   own built-in toolbar DOM (which we don't render), so there's no React element
+   to attach a class to.
    ============================================================================ */
 
 /* Hide Toast UI's built-in toolbar (we render our own) */
 .editor-container .toastui-editor-toolbar,
 .editor-container .toastui-editor-defaultUI-toolbar {
   display: none;
-}
-
-.editor-container .my-toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  position:sticky;
-  z-index:100;
-  gap: 4px;
-  padding: 6px 10px;
-  background: #f3f3f3;                 /* matches the preview pane */
-  border-bottom: 1px solid #dcdcdc;
-  height: 40px;
-  box-sizing: border-box;
-  transition: background-color 0.2s ease, border-color 0.2s ease;
-}
-
-.editor-container .my-toolbar button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 28px;
-  padding: 0;
-  border: none;
-  border-radius: 6px;
-  background: transparent;
-  color: rgba(0, 0, 0, 0.7);
-  cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease, transform 0.08s ease;
-}
-
-.editor-container .my-toolbar button:hover {
-  background: rgba(0, 0, 0, 0.06);
-  color: rgba(0, 0, 0, 0.9);
-  transform: translateY(-1px);
-}
-
-.editor-container .my-toolbar button:active {
-  transform: translateY(0);
-}
-
-/* Spacer pushes the buttons after it to the far right */
-.editor-container .my-toolbar__spacer {
-  flex: 1;
-}
-
-/* ---------- Responsive visibility (tablet/mobile vs desktop) ----------
-   These use !important because `.editor-container .my-toolbar button` already
-   sets display:inline-flex at a higher specificity than a utility class would.
-
-   tb-lg-only    → secondary tools + the desktop split toggle. Visible from lg
-                   up; below lg they live in the three-dots sheet instead.
-   tb-mobile-only→ the three-dots button + the edit/preview segment. Visible
-                   below lg; hidden once everything fits on the desktop bar. */
-@media (max-width: 1023px) {
-  .editor-container .my-toolbar .tb-lg-only {
-    display: none !important;
-  }
-}
-@media (min-width: 1024px) {
-  .editor-container .my-toolbar .tb-mobile-only {
-    display: none !important;
-  }
-}
-
-/* Segmented edit/preview switch (tablet & mobile). Two toolbar buttons wrapped
-   in a faint track; the active one gets the surface color so it reads as a
-   pressed tab. Reuses the existing palette only — no new hues. */
-.editor-container .my-toolbar__segment {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  padding: 2px;
-  border-radius: 8px;
-  background: rgba(0, 0, 0, 0.05);
-}
-
-.editor-container .my-toolbar__segment button[data-active="true"] {
-  background: #ffffff;
-  color: rgba(0, 0, 0, 0.9);
-}
-
-.dark .editor-container .my-toolbar__segment {
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.dark .editor-container .my-toolbar__segment button[data-active="true"] {
-  background: #3a3a3a;
-  color: #ffffff;
-}
-
-.editor-container .my-toolbar__theme {
-  color: rgba(0, 0, 0, 0.8);
-}
-
-/* ---------- Dark — matches the preview pane's dark surface (#1e1e1e) ---------- */
-.dark .editor-container .my-toolbar {
-  background: #1e1e1e;
-  border-bottom-color: #3a3a3a;
-}
-
-.dark .editor-container .my-toolbar button {
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.dark .editor-container .my-toolbar button:hover {
-  background: rgba(255, 255, 255, 0.12);
-  color: #ffffff;
-}
-
-.dark .editor-container .my-toolbar__theme {
-  color: rgba(255, 255, 255, 0.85);
 }

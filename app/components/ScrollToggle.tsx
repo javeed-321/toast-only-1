@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 // Floating button that jumps the markdown editor to the bottom when you're in
 // the top half of the document, and back to the top when you're in the bottom
@@ -41,19 +42,23 @@ export default function ScrollToggle({ ready }: { ready: boolean }) {
   if (!ready) return null;
 
   return (
-    <button
+    // shadcn Button (variant outline); classes merged last so they override the
+    // outline defaults and keep the original floating-pill look. The icon carries
+    // an explicit size so Button's cva doesn't force it to 16px.
+    <Button
       type="button"
+      variant="outline"
+      size="icon"
       onClick={handleClick}
       aria-label={nearTop ? "Scroll to bottom" : "Scroll to top"}
       title={nearTop ? "Scroll to bottom" : "Scroll to top"}
       className={
-        "absolute bottom-4 right-4 z-20 flex h-9 w-9 items-center justify-center " +
-        "rounded-full border shadow-sm transition-colors " +
+        "absolute bottom-4 right-4 z-20 h-9 w-9 rounded-full shadow-sm " +
         "bg-[#f3f3f3] border-[#dcdcdc] text-black/70 hover:bg-black/5 hover:text-black/90 " +
         "dark:bg-[#1e1e1e] dark:border-[#3a3a3a] dark:text-white/70 dark:hover:bg-white/10 dark:hover:text-white/95"
       }
     >
-      {nearTop ? <ArrowDown size={18} /> : <ArrowUp size={18} />}
-    </button>
+      {nearTop ? <ArrowDown className="size-[18px]" /> : <ArrowUp className="size-[18px]" />}
+    </Button>
   );
 }
