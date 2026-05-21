@@ -29,6 +29,18 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Mobile/tablet (< lg): tighten the preview's side gutters to match the
+   editor pane so the narrow viewport isn't mostly padding. Lives here (not in
+   toast.css) because this file loads last — same specificity as the rule
+   above, so source order decides the winner. Desktop keeps the 30px above. */
+@media (max-width: 1023px) {
+  .editor-container .toastui-editor-md-preview .toastui-editor-contents {
+    padding:10px 0px 0px 0px !important;
+  }
+}
+
+
+
 .editor-container .toastui-editor-md-preview {
   background: #f3f3f3;   /* StackEdit $preview-background-light */
 }

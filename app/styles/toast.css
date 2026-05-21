@@ -210,4 +210,12 @@
     padding-left: 18px;
     padding-right: 18px;
   }
+
+  /* Match the preview (output) pane to the editor's tighter gutters on mobile.
+     Overrides the 30px side padding from preview.css; desktop keeps 30px since
+     this lives inside the max-width:1023px query. */
+  .editor-container .toastui-editor-md-preview .toastui-editor-contents {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
 }
