@@ -44,7 +44,7 @@ const Editor = dynamic(
 );
 
 // Lightweight placeholder shown in the editor pane while the editor bundle and
-// highlight plugin load, so the area isn't blank on refresh. A few shimmering
+// highlight plugin load, s o the area isn't blank on refresh. A few shimmering
 // lines in the editor surface palette — no branded splash. Uses shadcn Skeleton
 // (its base `bg-accent`/`rounded-md` are overridden here to keep the original
 // faint black/white lines and 4px radius).
@@ -77,7 +77,7 @@ export default function EditorPage() {
   // Toast UI plugins, loaded client-side only (the Prism bundle needs `window`).
   // The editor is gated on this so code blocks are highlighted from first render.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [plugins, setPlugins] = useState<any[] | null>(null);
+  const [plugins, setPlugins]  = useState<any[] | null>(null);
 
   useEffect(() => {
     // Use the 40 KB base highlight plugin and register only the languages we
