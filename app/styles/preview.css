@@ -441,3 +441,19 @@
   content: none;
 }
 
+
+/* ── Math ($$ … $$) and UML ($$uml) ───────────────────────────────────────── */
+/* Display math (KaTeX): center it and let very wide equations scroll. */
+.editor-container .toastui-editor-md-preview .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.2em 0;
+}
+
+/* PlantUML diagrams render as an <img>; center it and keep it within the pane. */
+.editor-container .toastui-editor-md-preview img[src*="plantuml"] {
+  display: block;
+  margin: 1em auto;
+  max-width: 100%;
+  height: auto;
+}

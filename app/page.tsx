@@ -10,10 +10,13 @@ import "@toast-ui/editor/dist/theme/toastui-editor-dark.css";
 // preview.css (`.token.*`), not a stock Prism theme. The plugin CSS is safe to
 // import statically (it only styles the language-picker dropdown).
 import "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight.css";
+// KaTeX stylesheet — required for `$$math` blocks to lay out correctly.
+import "katex/dist/katex.min.css";
 import "./styles/toast.css";
 import "./styles/toolbar.css";
 import "./styles/preview.css";
 import { useState, useRef, useMemo, useCallback, useEffect } from "react";
+import { renderMath } from "./lib/diagrams";
 import Toolbar from "./components/Toolbar";
 import MarkdownDocs from "./components/MarkDownDocs";
 import { getMarkdownStats } from "./lib/markdown-stats";
@@ -78,6 +81,17 @@ export default function EditorPage() {
   // The editor is gated on this so code blocks are highlighted from first render.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [plugins, setPlugins]  = useState<any[] | null>(null);
+  // KaTeX's auto-render function, loaded alongside the plugins and stashed here
+  // for the post-render pass that renders math (`$…$`, `$$…$$`) in the preview.
+  // (Diagrams use the official `$$uml` plugin, which renders inline — no pass.)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const renderMathRef = useRef<any>(null);
+ useEffect(() => {
+  if (!tuiReady) return;
+  const inst = tuiRef.current?.getInstance();
+  if (!inst) return;
+  setHtmlStats(getHtmlStats(inst.getHTML() ?? ""));
+}, []);
 
   useEffect(() => {
     // Use the 40 KB base highlight plugin and register only the languages we
@@ -111,7 +125,20 @@ export default function EditorPage() {
       const codeSyntaxHighlight = (
         await import("@toast-ui/editor-plugin-code-syntax-highlight")
       ).default;
-      setPlugins([[codeSyntaxHighlight, { highlighter: Prism }]]);
+
+      // Diagrams: the official UML plugin renders `$$uml … $$` (PlantUML) blocks
+      // inline via its own toHTMLRenderers. Loaded here (not statically) because
+      // its UMD bundle references `self`, which is undefined during SSR.
+      const uml = (await import("@toast-ui/editor-plugin-uml")).default;
+
+      // Math: KaTeX has no Toast UI plugin and the `$…$` / `$$…$$` delimiters
+      // aren't custom blocks, so we use KaTeX's official auto-render extension
+      // in the client-side post-render pass below.
+      const renderMathInElement = (await import("katex/contrib/auto-render"))
+        .default;
+      renderMathRef.current = renderMathInElement;
+
+      setPlugins([[codeSyntaxHighlight, { highlighter: Prism }], uml]);
     })();
   }, []);
   // Start light on both server and client to avoid a hydration mismatch, then
@@ -136,6 +163,30 @@ export default function EditorPage() {
 
   },[darkMode, tuiReady])
 
+  // Render math (`$…$`, `$$…$$`) in the preview and keep it current. Toast UI
+  // rebuilds the preview HTML on every change, so we watch the preview pane and
+  // re-run the (debounced) KaTeX pass whenever it updates. (`$$uml` diagrams are
+  // rendered inline by the plugin, so they need no post-render pass.)
+  useEffect(() => {
+    if (!tuiReady) return;
+    const preview = document.querySelector<HTMLElement>(".toastui-editor-md-preview");
+    const renderMathInElement = renderMathRef.current;
+    if (!preview || !renderMathInElement) return;
+
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const run = () => {
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(() => renderMath(preview, renderMathInElement), 120);
+    };
+    run(); // initial pass for the restored/seed document
+    const observer = new MutationObserver(run);
+    observer.observe(preview, { childList: true, subtree: true, characterData: true });
+    return () => {
+      observer.disconnect();
+      if (timer) clearTimeout(timer);
+    };
+  }, [tuiReady, plugins]);
+
   // Whether the right-hand preview pane is shown (vertical split) or hidden.
   const [showPreview, setShowPreview] = useState(true);
 
@@ -150,7 +201,19 @@ export default function EditorPage() {
 
   // Rendered-HTML stats for the second status bar.
   const stats = useMemo(() => getMarkdownStats(text), [text]);
+  
   const [htmlStats, setHtmlStats] = useState({ chars: 0, words: 0, paragraphs: 0 });
+
+  // htmlStats is otherwise only refreshed by handleChange (on edit), so on a
+  // fresh load/refresh the HTML status bar would stay at 0/0/0 until you type.
+  // Once the editor is ready, compute it from the initial rendered HTML so the
+  // right-hand bar shows correct numbers immediately.
+  useEffect(() => {
+    if (!tuiReady) return;
+    const inst = tuiRef.current?.getInstance();
+    if (!inst) return;
+    setHtmlStats(getHtmlStats(inst.getHTML() ?? ""));
+  }, [tuiReady]);
 
 
   

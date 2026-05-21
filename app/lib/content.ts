@@ -344,4 +344,25 @@ That is a deliberate scoping choice:
 - [idb](https://github.com/jakearchibald/idb) — IndexedDB wrapper
 - [Tailwind CSS](https://tailwindcss.com)
 - Inspired by [StackEdit](https://stackedit.io) (Apache 2.0)
+
+---
+
+## 7. Math & Diagrams
+
+Inline math like $E = mc^2$ and display math render with KaTeX — use the
+standard \`$…$\` and \`$$…$$\` delimiters:
+
+$$
+\\int_0^\\infty e^{-x^2}\\,dx = \\frac{\\sqrt{\\pi}}{2}
+$$
+
+Diagrams use a \`$$uml\` block (rendered with PlantUML):
+
+$$uml
+@startuml
+Writer -> Editor: Type Markdown
+Editor -> Preview: Live render
+Preview --> Writer: HTML / PDF
+@enduml
+$$
 `;

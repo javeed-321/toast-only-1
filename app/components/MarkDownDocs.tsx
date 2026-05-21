@@ -266,7 +266,22 @@ export default function MarkdownDocs() {
       {/* ── Footer ── */}
       <Separator className="bg-[#ebebeb]" />
       <footer className="bg-white py-8 text-center text-sm text-[#959595]">
-        <p>© {new Date().getFullYear()} Markdown Editor. All rights reserved.</p>
+        <p className="text-[#5e5e5e]">
+          by{" "}
+          <a
+            href="https://documentation.ai/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-semibold text-[#f97d00] hover:underline"
+          >
+            Documentation.AI
+          </a>{" "}
+          — Create and maintain world-class documentation built for both humans
+          and AI
+        </p>
+        <p className="mt-2">
+          © {new Date().getFullYear()} Markdown Editor. All rights reserved.
+        </p>
       </footer>
     </section>
   );

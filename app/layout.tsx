@@ -8,7 +8,7 @@ import Providers from "./store/Providers";
 // and the sitemap. Set NEXT_PUBLIC_SITE_URL in your deploy env (e.g.
 // https://your-domain.com); the localhost fallback keeps dev/build working.
 export const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://toast-only-1.vercel.app/";
 
 // Body / UI / headings — Inter. Exposed as `--font-inter` (→ `--font-sans`).
 const inter = Inter({
