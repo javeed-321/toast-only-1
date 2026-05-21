@@ -16,6 +16,8 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  position:sticky;
+  z-index:100;
   gap: 4px;
   padding: 6px 10px;
   background: #f3f3f3;                 /* matches the preview pane */

@@ -14,16 +14,14 @@ type ToolbarProps = {
   darkMode: boolean;
   onToggleTheme: () => void;
   onExportHtml: () => void;
-  onExportPdf: () => void;
   handleRightPane: () => void;
 };
-const ICON_SIZE = 15;
+const ICON_SIZE = 14;
 export default function Toolbar({
   exec,
   darkMode,
   onToggleTheme,
   onExportHtml,
-  onExportPdf,
   handleRightPane,
 }: ToolbarProps) {
   // The uniform formatting buttons. Add or remove one by editing this array.
@@ -58,13 +56,7 @@ export default function Toolbar({
       {/* Pushes the buttons after it to the far right. */}
       <span className="my-toolbar__spacer" />
 
-      <button title="Export as HTML" aria-label="Export as HTML" onClick={onExportHtml}>
-        <FileCode size={16} />
-      </button>
-
-      <button title="Export as PDF" aria-label="Export as PDF" onClick={onExportPdf}>
-        <FileText size={16} />
-      </button>
+     
 
       <button
         className="my-toolbar__theme"
@@ -74,7 +66,8 @@ export default function Toolbar({
       >
         {darkMode ? <Sun size={18} /> : <Moon size={18} />}
       </button>
-      <button onClick={handleRightPane} aria-label="Toggle right pane">
+      <button onClick={handleRightPane} aria-label="Toggle right pane"   title="Toggle right pane"
+>
         <Eye size={18} />
       </button>
     </div>

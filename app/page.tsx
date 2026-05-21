@@ -17,11 +17,12 @@ import { useState, useRef, useMemo, useCallback, useEffect } from "react";
 import Toolbar from "./components/Toolbar";
 import MarkdownDocs from "./components/MarkDownDocs";
 import { getMarkdownStats } from "./lib/markdown-stats";
-import { mdContent } from "./lib/content";
-import { useMarkdownDoc } from "./hooks/useMarkdownDoc";
 import { useCursorPosition } from "./hooks/useCursorPosition";
-
-const INITIAL_VALUE = mdContent;
+import StatusBar from "./components/StatusBar";
+import ScrollToggle from "./components/ScrollToggle";
+import { exportHtml, exportPdf } from "./lib/utils";
+import { useAppDispatch, useAppSelector } from "./store/hooks";
+import { setBody } from "./store/docSlice";
 
 // Plain-text stats of the rendered HTML — mirrors usePreviewStats in
 // markdown-editor (chars = text length, words, paragraphs = block count).
@@ -36,24 +37,27 @@ function getHtmlStats(html: string) {
   return { chars, words, paragraphs };
 }
 
-// Full-screen branded loading screen shown until the editor is ready — covers
-// the IndexedDB read + editor-bundle download so the toolbar, editor and status
-// bars never appear half-loaded (and there's no seed-text flash on reload).
-// Swap the wordmark below for an <img> if you add a logo file to /public.
-function AppLoading() {
-  return (
-    <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-white dark:bg-[#1e1e1e]">
-      <span className="animate-loading-pulse text-[2.75rem] font-extrabold tracking-[-0.03em] text-[#111111] dark:text-[#f5f5f5]">
-        codeitip
-      </span>
-    </div>
-  );
-}
-
 const Editor = dynamic(
   () => import("@toast-ui/react-editor").then((m) => m.Editor),
   { ssr: false, loading: () => null }
 );
+
+// Lightweight placeholder shown in the editor pane while the editor bundle and
+// highlight plugin load, so the area isn't blank on refresh. A few shimmering
+// lines in the editor surface palette — no branded splash.
+function EditorSkeleton() {
+  return (
+    <div className="absolute inset-0 z-10 flex flex-col gap-3 p-6 bg-white dark:bg-[#1e1e1e]">
+      {[92, 70, 84, 60, 78, 45].map((w, i) => (
+        <div
+          key={i}
+          className="h-3.5 rounded animate-pulse bg-black/10 dark:bg-white/10"
+          style={{ width: `${w}%` }}
+        />
+      ))}
+    </div>
+  );
+}
 
 // Status-bar styling (was status-bar.css). Dark mode keys off `.dark` on <html>
 // via the `dark:` variant, so no per-state prop class is needed.
@@ -72,15 +76,54 @@ const STATUS_STAT =
 export default function EditorPage() {
   const tuiRef = useRef<any>(null);
   const [tuiReady, setTuiReady] = useState(false);
+  // Document body lives in Redux (persisted to localStorage via redux-persist),
+  // replacing the old idb-backed store. `initialBody` captures the rehydrated
+  // value once for the editor's initialValue; live edits flow back via dispatch.
+  const dispatch = useAppDispatch();
+  // The seed doc applies via the slice's initialState on a fresh, unpersisted
+  // load. An empty/whitespace body would trigger Toast UI's empty-state
+  // ("Write"/"Preview") on reload, so coerce it to a single space.
+  const text = useAppSelector((state) => state.doc.body);
+  const initialBodyRef = useRef(text.trim() ? text : " ");
   // Toast UI plugins, loaded client-side only (the Prism bundle needs `window`).
   // The editor is gated on this so code blocks are highlighted from first render.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [plugins, setPlugins] = useState<any[] | null>(null);
 
   useEffect(() => {
-    import(
-      "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight-all.js"
-    ).then((m) => setPlugins([m.default]));
+    // Use the 40 KB base highlight plugin and register only the languages we
+    // need, instead of the 725 KB `-all` bundle (which ships ~280 languages).
+    // Prism's language components extend a *global* `Prism`, so we expose it on
+    // window before importing them, in dependency order.
+    (async () => {
+      const prismMod = await import("prismjs");
+      const Prism = prismMod.default ?? prismMod;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (window as any).Prism = Prism;
+      // markup (html/xml), clike and css have no prerequisites.
+      await import("prismjs/components/prism-markup");
+      await import("prismjs/components/prism-clike");
+      await import("prismjs/components/prism-css");
+      await import("prismjs/components/prism-javascript"); // needs clike
+      await import("prismjs/components/prism-typescript"); // needs javascript
+      await import("prismjs/components/prism-jsx"); // needs markup + javascript
+      await import("prismjs/components/prism-tsx"); // needs jsx + typescript
+      await import("prismjs/components/prism-java"); // needs clike
+      await import("prismjs/components/prism-c"); // needs clike
+      await import("prismjs/components/prism-cpp"); // needs c
+      await import("prismjs/components/prism-go"); // needs clike
+      await import("prismjs/components/prism-rust");
+      await import("prismjs/components/prism-sql");
+      await import("prismjs/components/prism-json");
+      await import("prismjs/components/prism-bash");
+      await import("prismjs/components/prism-python");
+      await import("prismjs/components/prism-yaml");
+      await import("prismjs/components/prism-markdown"); // needs markup
+      const codeSyntaxHighlight = (
+        await import("@toast-ui/editor-plugin-code-syntax-highlight")
+      ).default;
+      setPlugins([[codeSyntaxHighlight, { highlighter: Prism }]]);
+    })();
   }, []);
   // Start light on both server and client to avoid a hydration mismatch, then
   // read the saved preference after mount (localStorage is browser-only).
@@ -109,17 +152,40 @@ export default function EditorPage() {
 
   // Document state: load from IndexedDB on mount + debounced autosave on every
   // change, all owned by the hook (same as my-app's useMarkdownDoc).
-  const { text, setText, hydrated, saveStatus } = useMarkdownDoc(INITIAL_VALUE);
 
   // Rendered-HTML stats for the second status bar.
   const stats = useMemo(() => getMarkdownStats(text), [text]);
   const [htmlStats, setHtmlStats] = useState({ chars: 0, words: 0, paragraphs: 0 });
 
+
+  
+
+  // Debounce the persist/stats work so it runs once after typing pauses, not on
+  // every keystroke. The editor itself stays the live source of truth; this only
+  // controls how often we re-serialize the doc, dispatch to Redux (→ IndexedDB
+  // write) and recompute stats.
+  const persistRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const handleChange = useCallback(() => {
     const inst = tuiRef.current?.getInstance();
-    setText(inst?.getMarkdown() ?? "");
-    setHtmlStats(getHtmlStats(inst?.getHTML() ?? ""));
-  }, [setText]);
+    if (!inst) return;
+    if (persistRef.current) clearTimeout(persistRef.current);
+    persistRef.current = setTimeout(() => {
+      // Never persist an empty document: a blank body makes Toast UI show its
+      // empty-state ("Write"/"Preview") on reload. Store a single space instead.
+      const md = inst.getMarkdown();
+      console.log(md)
+      dispatch(setBody(md.trim() ? md : " "));
+      setHtmlStats(getHtmlStats(inst.getHTML() ?? ""));
+    }, 300);
+  }, [dispatch]);
+
+  // Clear any pending debounced write when the component unmounts.
+  useEffect(() => {
+    return () => {
+      if (persistRef.current) clearTimeout(persistRef.current);
+    };
+  }, []);
 
   // Live caret line/column for the status bar (1-based).
   const cursor = useCursorPosition(tuiRef, tuiReady);
@@ -138,22 +204,7 @@ export default function EditorPage() {
     setDarkMode(next);
   };
 
-  const exportHtml = () => {
-    const inst = tuiRef.current?.getInstance();
-    if (!inst) return;
-    const html = inst.getHTML();
-    const blob = new Blob([html], { type: "text/html" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "document.html";
-    a.click();
-    URL.revokeObjectURL(url);
-  };
 
-  const exportPdf = () => {
-    alert("PDF export coming soon!");
-  };
 
   // Toggle the right preview pane using Toast UI's built-in changePreviewStyle:
   // 'vertical' = side-by-side split (preview shown), 'tab' = single pane (hidden).
@@ -165,30 +216,34 @@ export default function EditorPage() {
       return !prev;
     });
   };
+const getEditorHtml = () => tuiRef.current?.getInstance()?.getHTML() ?? "";
+
+  useEffect(()=>{
+                    tuiRef.current?.getInstance()?.moveCursorToEnd(true);
+
+  },[tuiReady,tuiRef])
 
   return (
     <>
-    {/* Logo screen covers the whole view (toolbar + editor + status bars)
-        until the editor is fully ready. The editor still mounts underneath so
-        it can load its bundle and read the saved doc. */}
-    {!tuiReady && <AppLoading />}
     <div className="editor-container">
       <Toolbar
         exec={exec}
         darkMode={darkMode}
         onToggleTheme={toggleTheme}
-        onExportHtml={exportHtml}
-        onExportPdf={exportPdf}
+        onExportHtml={() => exportHtml({ tuiRef })}
         handleRightPane={handleRightPane}
       />
-      <div style={{ height: "calc(100vh - 40px - 28px)" }}>
+      <div className="relative" style={{ height: "calc(100vh - 40px - 28px)" }}>
+        {/* Skeleton covers the pane until the editor has mounted and painted
+            (its bundle + the highlight plugin both have to load first). */}
+        {!tuiReady && <EditorSkeleton />}
         {/* Render only once the saved doc is loaded and the syntax-highlight
             plugin is ready, so it goes straight in as initialValue (no seed-text
             flash) and code blocks are highlighted from the first render. */}
-        {hydrated && plugins && (
+        { plugins && (
           <Editor
             ref={tuiRef}
-            initialValue={text}
+            initialValue={initialBodyRef.current}
             previewStyle="vertical"
             height="100%"
             initialEditType="markdown"
@@ -201,35 +256,35 @@ export default function EditorPage() {
 
             onLoad={() => {
               setTuiReady(true);
-              // Apply a theme restored from localStorage to the just-mounted editor.
-              // applyEditorTheme(darkMode);
-              // Populate the HTML status bar from the loaded document — handleChange
-              // otherwise only fires on edit, leaving the HTML stats at 0/0/0 on load
-              // while the Markdown stats already reflect the initial value.
-              handleChange();
+              if (initialBodyRef.current.trim()) {
+                // Double rAF: the first frame lets ProseMirror commit the
+                // initial document, the second runs after it has painted, so
+                // the caret lands on real content instead of an empty doc.
+                // requestAnimationFrame(() =>
+                //   requestAnimationFrame(() => {
+                //     tuiRef.current?.getInstance()?.moveCursorToEnd(true);
+                //   })
+                // );
+              }
             }}
           />
         )}
+        <ScrollToggle ready={tuiReady} />
       </div>
 
-      <div className="flex shrink-0">
-        <div className={STATUS_BAR}>
-          <span className={STATUS_LABEL}>Markdown</span>
-          <span className={STATUS_STAT}>{stats.bytes} bytes</span>
-          <span className={STATUS_STAT}>{stats.words} words</span>
-          <span className={STATUS_STAT}>{stats.lines} lines</span>
-          <span className={STATUS_STAT}>Ln {cursor.line}, Col {cursor.col}</span>
-          <span className={STATUS_STAT}>{saveStatus === "saving" ? "Saving…" : "Saved"}</span>
+<StatusBar
+  stats={stats}
+  htmlStats={htmlStats}
+  cursor={cursor}
+  onExportHtml={() => exportHtml({ tuiRef })}
+
+  
+  onExportPdf={() => exportPdf({ html: getEditorHtml(), title: "document" })}
+
+/>    
+        
+        
         </div>
-        {/* Second bar gets the divider border between the two halves. */}
-        <div className={`${STATUS_BAR} border-l`}>
-          <span className={STATUS_LABEL}>HTML</span>
-          <span className={STATUS_STAT}>{htmlStats.chars} characters</span>
-          <span className={STATUS_STAT}>{htmlStats.words} words</span>
-          <span className={STATUS_STAT}>{htmlStats.paragraphs} paragraphs</span>
-        </div>
-      </div>
-    </div>
 
     <MarkdownDocs />
     </>

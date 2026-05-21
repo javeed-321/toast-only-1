@@ -113,7 +113,7 @@ body::-webkit-scrollbar {
 
 .dark {
   /* Brand palette — dark. Accent #85a1ff on a near-black base. */
-  --background: #121212;
+  --background: #121212 !important;
   --foreground: #f2f2f2;        /* heading */
   --card: #121212;
   --card-foreground: #f2f2f2;

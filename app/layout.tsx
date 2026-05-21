@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
+import Providers from "./store/Providers";
 
 // Body / UI / headings — Inter. Exposed as `--font-inter` (→ `--font-sans`).
 const inter = Inter({
@@ -32,8 +34,17 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {/* Apply the saved theme before first paint to avoid a white flash on
+            reload. beforeInteractive injects this into the initial HTML so it
+            runs before React hydrates, without React's "script tag" warning. */}
+        <Script id="theme-init" strategy="beforeInteractive">
+          {`try{if(localStorage.getItem("theme")==="true"){document.documentElement.classList.add("dark")}}catch(e){}`}
+        </Script>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }
