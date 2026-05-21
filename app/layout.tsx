@@ -3,12 +3,25 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import Providers from "./store/Providers";
+import InstallPrompt from "./components/InstallPrompt";
 
 // Production origin used to build absolute URLs for canonical/OG/Twitter tags
-// and the sitemap. Set NEXT_PUBLIC_SITE_URL in your deploy env (e.g.
-// https://your-domain.com); the localhost fallback keeps dev/build working.
-export const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://toast-only-1.vercel.app/";
+// and the sitemap. This MUST be your real, publicly reachable domain: social
+// scrapers fetch og:image from this exact origin, so a wrong/hardcoded value
+// makes the share preview come up blank. Resolution order:
+//   1. NEXT_PUBLIC_SITE_URL — set this in your deploy env to your real domain
+//      (e.g. https://your-domain.com). Always wins; use it for custom domains.
+//   2. VERCEL_PROJECT_PRODUCTION_URL — Vercel's stable production domain, so the
+//      origin is correct automatically on Vercel without hardcoding a project.
+//   3. http://localhost:3000 — dev fallback (scrapers can't read localhost).
+function resolveSiteUrl() {
+  if (process.env.NEXT_PUBLIC_SITE_URL) return process.env.NEXT_PUBLIC_SITE_URL;
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL)
+    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+  return "http://localhost:3000";
+}
+
+export const siteUrl = resolveSiteUrl();
 
 // Body / UI / headings — Inter. Exposed as `--font-inter` (→ `--font-sans`).
 const inter = Inter({
@@ -155,6 +168,8 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         <Providers>{children}</Providers>
+        {/* Bottom-right "Add to home screen?" toast (Chromium installable). */}
+        <InstallPrompt />
       </body>
     </html>
   );

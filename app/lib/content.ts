@@ -347,14 +347,7 @@ That is a deliberate scoping choice:
 
 ---
 
-## 7. Math & Diagrams
-
-Inline math like $E = mc^2$ and display math render with KaTeX — use the
-standard \`$…$\` and \`$$…$$\` delimiters:
-
-$$
-\\int_0^\\infty e^{-x^2}\\,dx = \\frac{\\sqrt{\\pi}}{2}
-$$
+## 7. Diagrams
 
 Diagrams use a \`$$uml\` block (rendered with PlantUML):
 
