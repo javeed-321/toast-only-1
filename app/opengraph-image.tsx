@@ -10,9 +10,9 @@ export const alt = "Online Markdown Editor — free, ad free, no signup";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-// The logo tile (gradient rounded square + white Markdown mark), identical to
-// app/icon.svg. Embedded as a data URI so next/og can render it as an image.
-const logo = `<svg xmlns='http://www.w3.org/2000/svg' width='128' height='128' viewBox='0 0 128 128'><defs><linearGradient id='bg' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='#6366f1'/><stop offset='1' stop-color='#8b5cf6'/></linearGradient></defs><rect width='128' height='128' rx='28' fill='url(#bg)'/><path transform='translate(4.9 28.8) scale(0.55)' d='M30 98V30h20l20 25 20-25h20v68H90V59L70 84 50 59v39H30zM155 98l-30-33h20V30h20v35h20z' fill='#ffffff'/></svg>`;
+// The logo tile (brand-accent rounded square + white Markdown mark), identical
+// to app/icon.svg. Embedded as a data URI so next/og can render it as an image.
+const logo = `<svg xmlns='http://www.w3.org/2000/svg' width='128' height='128' viewBox='0 0 128 128'><rect width='128' height='128' rx='28' fill='#f97d00'/><path transform='translate(4.9 28.8) scale(0.55)' d='M30 98V30h20l20 25 20-25h20v68H90V59L70 84 50 59v39H30zM155 98l-30-33h20V30h20v35h20z' fill='#ffffff'/></svg>`;
 
 export default function OpengraphImage() {
   return new ImageResponse(
@@ -25,9 +25,9 @@ export default function OpengraphImage() {
           flexDirection: "column",
           justifyContent: "center",
           padding: "90px",
-          // Light surface to match the editor's light theme.
+          // Light surface matching the documentation.ai landing design.
           background: "#ffffff",
-          color: "#1e1e1e",
+          color: "#09090b",
         }}
       >
         {/* Logo + product name */}
@@ -45,7 +45,7 @@ export default function OpengraphImage() {
               fontWeight: 600,
               letterSpacing: 2,
               textTransform: "uppercase",
-              color: "#6b7280",
+              color: "#5e5e5e",
               marginLeft: 28,
             }}
           >
@@ -68,10 +68,10 @@ export default function OpengraphImage() {
 
         {/* Tagline */}
         <div style={{ display: "flex", fontSize: 36, marginTop: 28 }}>
-          <span style={{ color: "#6366f1", fontWeight: 600 }}>
+          <span style={{ color: "#f97d00", fontWeight: 600 }}>
             Free · Ad free · No signup
           </span>
-          <span style={{ color: "#6b7280", marginLeft: 14 }}>
+          <span style={{ color: "#5e5e5e", marginLeft: 14 }}>
             · Export to HTML & PDF
           </span>
         </div>
@@ -84,7 +84,7 @@ export default function OpengraphImage() {
             height: 10,
             marginTop: 56,
             borderRadius: 5,
-            background: "linear-gradient(90deg, #6366f1, #8b5cf6)",
+            background: "#f97d00",
           }}
         />
       </div>

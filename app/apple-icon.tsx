@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 // Apple touch icon (iOS home screen / Safari pinned tab). 180x180 PNG,
-// generated at request time — same Markdown mark and gradient as icon.svg.
+// generated at request time — same Markdown mark and brand accent as icon.svg.
 // Full-bleed (no rounded corners): iOS applies its own rounded mask.
 export const size = { width: 180, height: 180 };
 export const contentType = "image/png";
@@ -20,7 +20,7 @@ export default function AppleIcon() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+          background: "#f97d00",
         }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}

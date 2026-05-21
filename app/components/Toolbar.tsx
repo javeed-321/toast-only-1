@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import FeedbackButton from "./FeedbackButton";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Exec = (cmd: string, payload?: Record<string, any>) => void;
@@ -79,22 +80,24 @@ export default function Toolbar({
   // collapse into the three-dots sheet there (and stay inline on lg+).
   // Icons carry an explicit `size-[14px]` class so shadcn's Button cva (which
   // forces unclassed svgs to size-4 / 16px) leaves their size alone.
-  const buttons: ToolButton[] = [
-    { title: "Bold",            onClick: () => exec("bold"),                                                 icon: <Bold className="size-[14px]" />,          primary: true },
-    { title: "Italic",          onClick: () => exec("italic"),                                               icon: <Italic className="size-[14px]" />,        primary: true },
-    { title: "Strikethrough",   onClick: () => exec("strike"),                                               icon: <Strikethrough className="size-[14px]" /> },
-    { title: "Heading 1",       onClick: () => exec("heading", { level: 1 }),                                icon: <Heading1 className="size-[14px]" />,      primary: true },
-    { title: "Heading 2",       onClick: () => exec("heading", { level: 2 }),                                icon: <Heading2 className="size-[14px]" /> },
-    { title: "Horizontal rule", onClick: () => exec("hr"),                                                   icon: <Minus className="size-[14px]" /> },
-    { title: "Blockquote",      onClick: () => exec("blockQuote"),                                           icon: <Quote className="size-[14px]" /> },
-    { title: "Bulleted list",   onClick: () => exec("bulletList"),                                           icon: <List className="size-[14px]" />,          primary: true },
-    { title: "Numbered list",   onClick: () => exec("orderedList"),                                          icon: <ListOrdered className="size-[14px]" /> },
-    { title: "Task list",       onClick: () => exec("taskList"),                                             icon: <ListChecks className="size-[14px]" /> },
-    { title: "Inline code",     onClick: () => exec("code"),                                                 icon: <Code className="size-[14px]" />,          primary: true },
-    { title: "Code block",      onClick: () => exec("codeBlock"),                                            icon: <Braces className="size-[14px]" /> },
-    { title: "Link",            onClick: () => exec("addLink", { linkUrl: "https://", linkText: "link" }),   icon: <Link className="size-[14px]" /> },
-    { title: "Image",           onClick: () => exec("addImage", { imageUrl: "" }),                           icon: <Image className="size-[14px]" /> },
-    { title: "Table",           onClick: () => exec("addTable", { rowCount: 3, columnCount: 3 }),            icon: <Table className="size-[14px]" /> },
+const ICON_SIZE = "size-[15px]";
+
+const buttons: ToolButton[] = [
+    { title: "Bold",            onClick: () => exec("bold"),                                                 icon: <Bold className={ICON_SIZE} />,          primary: true },
+    { title: "Italic",          onClick: () => exec("italic"),                                               icon: <Italic className={ICON_SIZE} />,        primary: true },
+    { title: "Strikethrough",   onClick: () => exec("strike"),                                               icon: <Strikethrough className={ICON_SIZE} /> },
+    { title: "Heading 1",       onClick: () => exec("heading", { level: 1 }),                                icon: <Heading1 className={ICON_SIZE} />,      primary: true },
+    { title: "Heading 2",       onClick: () => exec("heading", { level: 2 }),                                icon: <Heading2 className={ICON_SIZE} /> },
+    { title: "Horizontal rule", onClick: () => exec("hr"),                                                   icon: <Minus className={ICON_SIZE} /> },
+    { title: "Blockquote",      onClick: () => exec("blockQuote"),                                           icon: <Quote className={ICON_SIZE} /> },
+    { title: "Bulleted list",   onClick: () => exec("bulletList"),                                           icon: <List className={ICON_SIZE} />,          primary: true },
+    { title: "Numbered list",   onClick: () => exec("orderedList"),                                          icon: <ListOrdered className={ICON_SIZE} /> },
+    { title: "Task list",       onClick: () => exec("taskList"),                                             icon: <ListChecks className={ICON_SIZE} /> },
+    { title: "Inline code",     onClick: () => exec("code"),                                                 icon: <Code className={ICON_SIZE} />,          primary: true },
+    { title: "Code block",      onClick: () => exec("codeBlock"),                                            icon: <Braces className={ICON_SIZE} /> },
+    { title: "Link",            onClick: () => exec("addLink", { linkUrl: "https://", linkText: "link" }),   icon: <Link className={ICON_SIZE} /> },
+    { title: "Image",           onClick: () => exec("addImage", { imageUrl: "" }),                           icon: <Image className={ICON_SIZE} /> },
+    { title: "Table",           onClick: () => exec("addTable", { rowCount: 3, columnCount: 3 }),            icon: <Table className={ICON_SIZE} /> },
   ];
 
   // The non-primary buttons, in order — these populate the three-dots sheet.
@@ -163,6 +166,9 @@ export default function Toolbar({
           <Eye className="size-[14px]" />
         </ToggleGroupItem>
       </ToggleGroup>
+
+      {/* Feedback — self-contained trigger + modal; posts to /api/feedback. */}
+      <FeedbackButton triggerClassName={`${TOOLBAR_BTN} text-black/80 dark:text-white/85`} />
 
       <Button
         variant="ghost"
