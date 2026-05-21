@@ -57,6 +57,51 @@
   flex: 1;
 }
 
+/* ---------- Responsive visibility (tablet/mobile vs desktop) ----------
+   These use !important because `.editor-container .my-toolbar button` already
+   sets display:inline-flex at a higher specificity than a utility class would.
+
+   tb-lg-only    → secondary tools + the desktop split toggle. Visible from lg
+                   up; below lg they live in the three-dots sheet instead.
+   tb-mobile-only→ the three-dots button + the edit/preview segment. Visible
+                   below lg; hidden once everything fits on the desktop bar. */
+@media (max-width: 1023px) {
+  .editor-container .my-toolbar .tb-lg-only {
+    display: none !important;
+  }
+}
+@media (min-width: 1024px) {
+  .editor-container .my-toolbar .tb-mobile-only {
+    display: none !important;
+  }
+}
+
+/* Segmented edit/preview switch (tablet & mobile). Two toolbar buttons wrapped
+   in a faint track; the active one gets the surface color so it reads as a
+   pressed tab. Reuses the existing palette only — no new hues. */
+.editor-container .my-toolbar__segment {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.editor-container .my-toolbar__segment button[data-active="true"] {
+  background: #ffffff;
+  color: rgba(0, 0, 0, 0.9);
+}
+
+.dark .editor-container .my-toolbar__segment {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.dark .editor-container .my-toolbar__segment button[data-active="true"] {
+  background: #3a3a3a;
+  color: #ffffff;
+}
+
 .editor-container .my-toolbar__theme {
   color: rgba(0, 0, 0, 0.8);
 }

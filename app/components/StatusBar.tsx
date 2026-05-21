@@ -64,14 +64,18 @@ export default function StatusBar({
       onExportPdf
 
 }: StatusBarProps) {
+  // One bar per pane. On small screens they stack full-width (flex-col on the
+  // wrapper) and are allowed to scroll sideways instead of clipping stats; from
+  // `sm` up they split the width 50/50 and clip via overflow-hidden as before.
   const STATUS_BAR =
-    "flex grow shrink basis-1/2 min-w-0 items-center h-7 px-3 box-border overflow-hidden " +
+    "flex w-full sm:basis-1/2 sm:grow sm:shrink min-w-0 items-center h-7 px-3 box-border " +
+    "overflow-x-auto sm:overflow-hidden whitespace-nowrap no-scrollbar " +
     "select-none text-[11.5px] font-normal border-t bg-[#f3f3f3] border-[#dcdcdc] text-black/70 " +
     "dark:bg-[#1e1e1e] dark:border-[#3a3a3a] dark:text-white/70";
   const STATUS_LABEL =
-    "text-black/80 font-semibold text-[11px] mr-1 dark:text-white/85";
+    "shrink-0 text-black/80 font-semibold text-[11px] mr-1 dark:text-white/85";
   const STATUS_STAT =
-    "before:content-['|'] before:mx-2 before:font-light before:text-[#dcdcdc] dark:before:text-[#3a3a3a]";
+    "shrink-0 before:content-['|'] before:mx-2 before:font-light before:text-[#dcdcdc] dark:before:text-[#3a3a3a]";
 
   // Compact text-button — lives inside the h-7 bar without breaking rhythm.
   // Same three-color palette as the rest of the status bar (no new hues),
@@ -83,7 +87,7 @@ export default function StatusBar({
     "transition-colors";
 
   return (
-    <div className="flex shrink-0">
+    <div className="flex flex-col sm:flex-row shrink-0">
       <div className={STATUS_BAR}>
         <span className={STATUS_LABEL}>Markdown</span>
         <span className={STATUS_STAT}>{stats.bytes} bytes</span>
@@ -95,7 +99,7 @@ export default function StatusBar({
         </span> */}
       </div>
 
-      <div className={`${STATUS_BAR} border-l`}>
+      <div className={`${STATUS_BAR} sm:border-l`}>
         <span className={STATUS_LABEL}>HTML</span>
         <span className={STATUS_STAT}>{htmlStats.chars} characters</span>
         <span className={STATUS_STAT}>{htmlStats.words} words</span>
@@ -112,7 +116,7 @@ export default function StatusBar({
             aria-label="Export as HTML"
           >
             <FileCode size={12} />
-            Export HTML
+            <span className="hidden min-[420px]:inline">Export HTML</span>
           </button>
           <button
             className={STATUS_BUTTON}
@@ -121,7 +125,7 @@ export default function StatusBar({
             aria-label="Export as PDF"
           >
             <FileText size={12} />
-            Export PDF
+            <span className="hidden min-[420px]:inline">Export PDF</span>
           </button>
         </div>
       </div>

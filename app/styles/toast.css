@@ -167,3 +167,47 @@
   border-bottom-right-radius: 6px;
   margin-bottom: 10px;
 }
+
+/* ============================================================================
+   Responsive — tablet & mobile (< lg / 1024px): show ONE pane at a time.
+   Toast UI's vertical split puts the markdown editor and the preview side by
+   side at width:50% with a 1px splitter between them. There isn't room for that
+   below lg, so the pencil/eye toggle in the toolbar sets data-mview on
+   .editor-container and these rules collapse the split to a single full-width
+   pane. Desktop (≥1024px) keeps the real side-by-side split, untouched.
+   Only dimensions/visibility change here — no new colors.
+   ============================================================================ */
+@media (max-width: 1023px) {
+  /* The drag splitter is meaningless when panes are toggled, not shared. */
+  .editor-container .toastui-editor-md-splitter {
+    display: none !important;
+  }
+
+  /* "edit" → markdown fills the width, preview hidden. */
+  .editor-container[data-mview="edit"]
+    .toastui-editor-md-vertical-style .toastui-editor {
+    width: 100% !important;
+  }
+  .editor-container[data-mview="edit"]
+    .toastui-editor-md-vertical-style .toastui-editor-md-preview {
+    display: none !important;
+  }
+
+  /* "preview" → rendered output fills the width, markdown hidden. */
+  .editor-container[data-mview="preview"]
+    .toastui-editor-md-vertical-style .toastui-editor {
+    display: none !important;
+  }
+  .editor-container[data-mview="preview"]
+    .toastui-editor-md-vertical-style .toastui-editor-md-preview {
+    width: 100% !important;
+    left: 0 !important;
+  }
+
+  /* Tighten the editing column's side padding so the narrow viewport isn't
+     mostly gutter (desktop keeps the roomy 30px from the rule above). */
+  .editor-container .toastui-editor-md-container .ProseMirror {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+}

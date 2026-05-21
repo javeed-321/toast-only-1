@@ -150,6 +150,12 @@ export default function EditorPage() {
   // Whether the right-hand preview pane is shown (vertical split) or hidden.
   const [showPreview, setShowPreview] = useState(true);
 
+  // Below `lg`, the two panes can't sit side by side, so we show one at a time.
+  // This drives the `data-mview` attribute the responsive CSS keys off (see
+  // toast.css). On desktop the attribute is present but ignored — the real
+  // split is controlled by Toast UI's previewStyle instead.
+  const [mobileView, setMobileView] = useState<"edit" | "preview">("edit");
+
   // Document state: load from IndexedDB on mount + debounced autosave on every
   // change, all owned by the hook (same as my-app's useMarkdownDoc).
 
@@ -225,13 +231,15 @@ const getEditorHtml = () => tuiRef.current?.getInstance()?.getHTML() ?? "";
 
   return (
     <>
-    <div className="editor-container">
+    <div className="editor-container" data-mview={mobileView}>
       <Toolbar
         exec={exec}
         darkMode={darkMode}
         onToggleTheme={toggleTheme}
         onExportHtml={() => exportHtml({ tuiRef })}
         handleRightPane={handleRightPane}
+        mobileView={mobileView}
+        onMobileView={setMobileView}
       />
       <div className="relative" style={{ height: "calc(100vh - 40px - 28px)" }}>
         {/* Skeleton covers the pane until the editor has mounted and painted

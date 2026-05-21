@@ -75,6 +75,16 @@ body::-webkit-scrollbar {
   display: none;                /* Chrome / Safari */
 }
 
+/* Scrollable-but-bar-less: lets the compact status bar scroll its stats
+   sideways on mobile without showing a scrollbar under the 7px-tall row. */
+.no-scrollbar {
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* legacy Edge / IE */
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;                /* Chrome / Safari */
+}
+
 :root {
   /* Brand palette — light. Accent #3143e3 on a neutral grayscale base. */
   --background: #ffffff;
