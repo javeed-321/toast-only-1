@@ -192,14 +192,9 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        {/* Tally embed — scans for data-tally-* attributes (see FeedbackButton)
-            and opens the feedback popup on click. Loads after hydration, by which
-            point the Feedback button is in the DOM for Tally to bind. */}
-        <Script
-          id="tally-embed"
-          src="https://tally.so/widgets/embed.js"
-          strategy="afterInteractive"
-        />
+        {/* Tally's embed script is no longer loaded here on every visit. It's
+            fetched lazily the first time someone clicks Feedback (see
+            FeedbackButton), keeping its ~14 KB off the initial page load. */}
         <Providers>{children}</Providers>
         {/* Bottom-right "Add to home screen?" toast (Chromium installable). */}
         <InstallPrompt />

@@ -1,18 +1,15 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import "@toast-ui/editor/dist/toastui-editor.css";
-import "@toast-ui/editor/dist/theme/toastui-editor-dark.css";
-// Prism-based syntax highlighting for code blocks in the preview. The `-all`
-// JS bundle (Prism core + every language) touches `window` at load, so it's
-// imported lazily on the client (see the effect below) rather than statically —
-// a static import would crash SSR. Token colors come from our own palette in
-// preview.css (`.token.*`), not a stock Prism theme. The plugin CSS is safe to
-// import statically (it only styles the language-picker dropdown).
-import "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight.css";
-import "../styles/toast.css";
+// Toolbar renders immediately (before the editor mounts), so its styles must be
+// in the render-blocking route CSS. Everything else here only styles Toast UI
+// internals — the editor, preview pane, code-highlight tokens — which don't
+// exist in the DOM until the editor lazily mounts. Importing those statically
+// put ~11 KB of editor CSS on the critical render path (Lighthouse flagged it
+// as render-blocking). They're loaded dynamically in the effect below instead,
+// and awaited before the editor un-gates, so there's no flash of unstyled
+// editor while keeping them off the initial paint's critical path.
 import "../styles/toolbar.css";
-import "../styles/preview.css";
 import { useState, useRef, useMemo, useCallback, useEffect } from "react";
 import Toolbar from "./Toolbar";
 import { getMarkdownStats } from "../lib/markdown-stats";
@@ -37,9 +34,22 @@ function getHtmlStats(html: string) {
   return { chars, words, paragraphs };
 }
 
+function EditorSkeleton() {
+  return (
+    <div className="absolute inset-0 z-10 flex flex-col gap-4 p-6 bg-white dark:bg-[#1e1e1e]">
+      {[95, 88, 72, 91, 65, 84, 78, 93, 60, 87, 74, 92, 68, 81, 55, 90, 76].map((w, i) => (
+        <Skeleton
+          key={i}
+          className="h-5 rounded bg-black/10 dark:bg-white/10"
+          style={{ width: `${w}%` }}
+        />
+      ))}
+    </div>
+  );
+}
 const Editor = dynamic(
   () => import("@toast-ui/react-editor").then((m) => m.Editor),
-  { ssr: false, loading: () => null }
+  { ssr: false, loading: () => <EditorSkeleton /> }
 );
 
 // ── Scroll-position carry-over across pane toggles ──
@@ -66,19 +76,24 @@ function scrollRatio(el: HTMLElement) {
   return max <= 0 ? 0 : el.scrollTop / max;
 }
 
-function applyScrollRatio(el: HTMLElement, ratio: number) {
-  const max = Math.max(0, el.scrollHeight - el.clientHeight);
-  el.scrollTop = ratio * max;
-}
-
 // A pane is display:none until a toggle paints, so wait two frames for the
 // target to lay out before matching its scroll position.
 function syncPanesToRatio(ratio: number) {
   requestAnimationFrame(() =>
     requestAnimationFrame(() => {
       const { editor, preview } = getPaneScrollers();
-      if (editor) applyScrollRatio(editor, ratio);
-      if (preview) applyScrollRatio(preview, ratio);
+      // Batch all geometry *reads* before any *writes*. Doing read→write→
+      // read→write across the two panes would force a reflow on the second
+      // read (the first write invalidates layout); reading both maxes up front
+      // collapses it to a single layout pass.
+      const editorMax = editor
+        ? Math.max(0, editor.scrollHeight - editor.clientHeight)
+        : 0;
+      const previewMax = preview
+        ? Math.max(0, preview.scrollHeight - preview.clientHeight)
+        : 0;
+      if (editor) editor.scrollTop = ratio * editorMax;
+      if (preview) preview.scrollTop = ratio * previewMax;
     })
   );
 }
@@ -88,19 +103,7 @@ function syncPanesToRatio(ratio: number) {
 // lines in the editor surface palette — no branded splash. Uses shadcn Skeleton
 // (its base `bg-accent`/`rounded-md` are overridden here to keep the original
 // faint black/white lines and 4px radius).
-function EditorSkeleton() {
-  return (
-    <div className="absolute inset-0 z-10 flex flex-col gap-4 p-6 bg-white dark:bg-[#1e1e1e]">
-      {[95, 88, 72, 91, 65, 84, 78, 93, 60, 87, 74, 92, 68, 81, 55, 90, 76].map((w, i) => (
-        <Skeleton
-          key={i}
-          className="h-5 rounded bg-black/10 dark:bg-white/10"
-          style={{ width: `${w}%` }}
-        />
-      ))}
-    </div>
-  );
-}
+
 
 export default function EditorPane() {
   const tuiRef = useRef<any>(null);
@@ -135,6 +138,20 @@ export default function EditorPane() {
       // <Editor> below mounts the instant `plugins` is set, instead of starting
       // its (large) download only afterwards — avoids a load waterfall.
       const editorChunk = import("@toast-ui/react-editor");
+
+      // Editor/preview/code-highlight CSS, loaded here (not as static imports)
+      // so it stays off the initial render-blocking critical path. These only
+      // style Toast UI internals, which don't exist until the editor mounts;
+      // awaited below before un-gating so the editor never paints unstyled.
+      const cssChunk = Promise.all([
+        import("@toast-ui/editor/dist/toastui-editor.css"),
+        import("@toast-ui/editor/dist/theme/toastui-editor-dark.css"),
+        import(
+          "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight.css"
+        ),
+        import("../styles/toast.css"),
+        import("../styles/preview.css"),
+      ]);
 
       const prismMod = await import("prismjs");
       const Prism = prismMod.default ?? prismMod;
@@ -174,7 +191,9 @@ export default function EditorPane() {
         await import("@toast-ui/editor-plugin-code-syntax-highlight")
       ).default;
 
-      await editorChunk; // ensure the editor module is cached before we ungate
+      // Ensure the editor module AND its CSS are ready before un-gating, so the
+      // editor mounts fully styled (no flash of unstyled content).
+      await Promise.all([editorChunk, cssChunk]);
       setPlugins([[codeSyntaxHighlight, { highlighter: Prism }]]);
     })();
   }, []);
@@ -330,7 +349,7 @@ const getEditorHtml = () => tuiRef.current?.getInstance()?.getHTML() ?? "";
       <div className="relative" style={{ height: "calc(100vh - 40px - 28px)" }}>
         {/* Skeleton covers the pane until the editor has mounted and painted
             (its bundle + the highlight plugin both have to load first). */}
-        {!tuiReady && <EditorSkeleton />}
+        {/* {!tuiReady && <EditorSkeleton />} */}
         {/* Render only once the saved doc is loaded and the syntax-highlight
             plugin is ready, so it goes straight in as initialValue (no seed-text
             flash) and code blocks are highlighted from the first render. */}
