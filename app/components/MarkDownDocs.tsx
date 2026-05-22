@@ -148,7 +148,7 @@ const faqJsonLd = {
 // renders — directly extractable by answer engines.
 const howToJsonLd = {
   "@context": "https://schema.org",
-  "@type": "HowTo",
+  "@type": "HowTo Export PDF",
   name: "How to use the Online Markdown Editor",
   step: STEPS.map((s, i) => ({
     "@type": "HowToStep",

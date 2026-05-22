@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 
 // storage.ts decides at module-load time whether it's running on the client
-// (real IndexedDB-backed localforage) or the server (a noop fallback used
-// during SSR of the Provider). We exercise both branches by controlling
-// `window` and re-importing the module fresh each time.
+// (localStorage-backed) or the server (a noop fallback used during SSR of the
+// Provider). We exercise both branches by controlling `window` and re-importing
+// the module fresh each time.
 describe("storage engine", () => {
   beforeEach(() => {
     vi.resetModules();
@@ -19,6 +19,14 @@ describe("storage engine", () => {
     expect(typeof storage.getItem).toBe("function");
     expect(typeof storage.setItem).toBe("function");
     expect(typeof storage.removeItem).toBe("function");
+  });
+
+  it("reads and writes through localStorage on the client", async () => {
+    const { default: storage } = await import("./storage");
+    await storage.setItem("mdx-editor", "hello");
+    await expect(storage.getItem("mdx-editor")).resolves.toBe("hello");
+    await storage.removeItem("mdx-editor");
+    await expect(storage.getItem("mdx-editor")).resolves.toBeNull();
   });
 
   it("falls back to a noop storage when window is undefined (SSR)", async () => {

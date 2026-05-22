@@ -1,12 +1,12 @@
-import localforage from "localforage";
-
-// redux-persist storage engine backed by IndexedDB (via localforage). Unlike
-// localStorage, reads/writes are asynchronous and run off the main thread, so
-// saving a large document no longer blocks typing. This is the async,
-// large-quota persistence the old `idb` setup had — now driven by Redux.
+// redux-persist storage engine backed by localStorage. localStorage is
+// synchronous, but redux-persist expects a Promise-based API, so each method is
+// wrapped to resolve/reject through a Promise. Writes still only happen after
+// the editor's typing debounce (see components/EditorPane.tsx), so the
+// synchronous main-thread write fires at most once per pause in typing.
 //
 // The store module is evaluated during SSR of the client Provider, where
-// `window`/IndexedDB don't exist, so fall back to a noop storage on the server.
+// `window`/localStorage don't exist, so fall back to a noop storage on the
+// server.
 type PersistStorage = {
   getItem(key: string): Promise<string | null>;
   setItem(key: string, value: string): Promise<unknown>;
@@ -21,14 +21,19 @@ function createNoopStorage(): PersistStorage {
   };
 }
 
+function createLocalStorage(): PersistStorage {
+  return {
+    getItem: (key) => Promise.resolve(window.localStorage.getItem(key)),
+    setItem: (key, value) =>
+      Promise.resolve(window.localStorage.setItem(key, value)),
+    removeItem: (key) => Promise.resolve(window.localStorage.removeItem(key)),
+  };
+}
+
 const isClient = typeof window !== "undefined";
 
 const storage: PersistStorage = isClient
-  ? localforage.createInstance({
-      name: "mdx-editor",
-      storeName: "doc",
-      driver: localforage.INDEXEDDB,
-    })
+  ? createLocalStorage()
   : createNoopStorage();
 
 export default storage;

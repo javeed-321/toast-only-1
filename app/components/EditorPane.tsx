@@ -129,41 +129,53 @@ export default function EditorPane() {
     // Use the 40 KB base highlight plugin and register only the languages we
     // need, instead of the 725 KB `-all` bundle (which ships ~280 languages).
     // Prism's language components extend a *global* `Prism`, so we expose it on
-    // window before importing them, in dependency order.
+    // window before importing them.
     (async () => {
+      // Warm the editor chunk in parallel with the highlighter so the gated
+      // <Editor> below mounts the instant `plugins` is set, instead of starting
+      // its (large) download only afterwards — avoids a load waterfall.
+      const editorChunk = import("@toast-ui/react-editor");
+
       const prismMod = await import("prismjs");
       const Prism = prismMod.default ?? prismMod;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (window as any).Prism = Prism;
-      // markup (html/xml), clike and css have no prerequisites.
-      await import("prismjs/components/prism-markup");
-      await import("prismjs/components/prism-clike");
-      await import("prismjs/components/prism-css");
-      await import("prismjs/components/prism-javascript"); // needs clike
-      await import("prismjs/components/prism-typescript"); // needs javascript
-      await import("prismjs/components/prism-jsx"); // needs markup + javascript
+
+      // Prism language components register against the global `Prism` and have
+      // load-order dependencies, so import them in dependency *tiers*: parallel
+      // within a tier, sequential across tiers (4 batches instead of 18 serial
+      // round-trips).
+      await Promise.all([
+        import("prismjs/components/prism-markup"), // html/xml
+        import("prismjs/components/prism-clike"),
+        import("prismjs/components/prism-css"),
+        import("prismjs/components/prism-rust"),
+        import("prismjs/components/prism-sql"),
+        import("prismjs/components/prism-json"),
+        import("prismjs/components/prism-bash"),
+        import("prismjs/components/prism-python"),
+        import("prismjs/components/prism-yaml"),
+      ]);
+      await Promise.all([
+        import("prismjs/components/prism-javascript"), // needs clike
+        import("prismjs/components/prism-java"), // needs clike
+        import("prismjs/components/prism-c"), // needs clike
+        import("prismjs/components/prism-go"), // needs clike
+        import("prismjs/components/prism-markdown"), // needs markup
+      ]);
+      await Promise.all([
+        import("prismjs/components/prism-typescript"), // needs javascript
+        import("prismjs/components/prism-jsx"), // needs markup + javascript
+        import("prismjs/components/prism-cpp"), // needs c
+      ]);
       await import("prismjs/components/prism-tsx"); // needs jsx + typescript
-      await import("prismjs/components/prism-java"); // needs clike
-      await import("prismjs/components/prism-c"); // needs clike
-      await import("prismjs/components/prism-cpp"); // needs c
-      await import("prismjs/components/prism-go"); // needs clike
-      await import("prismjs/components/prism-rust");
-      await import("prismjs/components/prism-sql");
-      await import("prismjs/components/prism-json");
-      await import("prismjs/components/prism-bash");
-      await import("prismjs/components/prism-python");
-      await import("prismjs/components/prism-yaml");
-      await import("prismjs/components/prism-markdown"); // needs markup
+
       const codeSyntaxHighlight = (
         await import("@toast-ui/editor-plugin-code-syntax-highlight")
       ).default;
 
-      // Diagrams: the official UML plugin renders `$$uml … $$` (PlantUML) blocks
-      // inline via its own toHTMLRenderers. Loaded here (not statically) because
-      // its UMD bundle references `self`, which is undefined during SSR.
-      const uml = (await import("@toast-ui/editor-plugin-uml")).default;
-
-      setPlugins([[codeSyntaxHighlight, { highlighter: Prism }], uml]);
+      await editorChunk; // ensure the editor module is cached before we ungate
+      setPlugins([[codeSyntaxHighlight, { highlighter: Prism }]]);
     })();
   }, []);
   // Start light on both server and client to avoid a hydration mismatch, then
@@ -197,8 +209,8 @@ export default function EditorPane() {
   // split is controlled by Toast UI's previewStyle instead.
   const [mobileView, setMobileView] = useState<"edit" | "preview">("edit");
 
-  // Document state: load from IndexedDB on mount + debounced autosave on every
-  // change, all owned by the hook (same as my-app's useMarkdownDoc).
+  // Document state: load from localStorage on mount + debounced autosave on
+  // every change, all owned by the hook (same as my-app's useMarkdownDoc).
 
   // Rendered-HTML stats for the second status bar.
   const stats = useMemo(() => getMarkdownStats(text), [text]);
@@ -221,7 +233,7 @@ export default function EditorPane() {
 
   // Debounce the persist/stats work so it runs once after typing pauses, not on
   // every keystroke. The editor itself stays the live source of truth; this only
-  // controls how often we re-serialize the doc, dispatch to Redux (→ IndexedDB
+  // controls how often we re-serialize the doc, dispatch to Redux (→ localStorage
   // write) and recompute stats.
   const persistRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -322,7 +334,7 @@ const getEditorHtml = () => tuiRef.current?.getInstance()?.getHTML() ?? "";
         {/* Render only once the saved doc is loaded and the syntax-highlight
             plugin is ready, so it goes straight in as initialValue (no seed-text
             flash) and code blocks are highlighted from the first render. */}
-        { plugins && (
+        {plugins && (
           <Editor
             ref={tuiRef}
             initialValue={initialBodyRef.current}

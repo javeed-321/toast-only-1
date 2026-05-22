@@ -9,16 +9,16 @@ import {
   PURGE,
   REGISTER,
 } from "redux-persist";
-import storage from "./storage"; // IndexedDB (async, non-blocking) via localforage
+import storage from "./storage"; // localStorage-backed redux-persist engine
 import docReducer from "./docSlice";
 
 const rootReducer = combineReducers({
   doc: docReducer,
 });
 
-// Persist the document to IndexedDB so it survives a refresh without blocking
-// the main thread — this replaces the old idb-backed autosave. key "mdx-editor"
-// mirrors the previous DB name.
+// Persist the document to localStorage so it survives a refresh. The editor's
+// typing debounce (see components/EditorPane.tsx) keeps writes infrequent.
+// key "mdx-editor" mirrors the previous storage name.
 const persistConfig = {
   key: "mdx-editor",
   storage,

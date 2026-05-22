@@ -129,12 +129,7 @@ export const viewport: Viewport = {
 const jsonLd = {
   "@context": "https://schema.org",
   "@graph": [
-    {
-      "@type": "Organization",
-      "@id": `${siteUrl}/#organization`,
-      name: "Online Markdown Editor",
-      url: siteUrl,
-    },
+   
     {
       "@type": "WebSite",
       "@id": `${siteUrl}/#website`,
