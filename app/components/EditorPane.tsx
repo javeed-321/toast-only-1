@@ -76,6 +76,11 @@ const Editor = dynamic(
   { ssr: false, loading: () => <EditorSkeleton /> }
 );
 
+// localStorage key for the persisted caret. We store the markdown [line, col]
+// of the selection start so the caret can be restored to the same spot on the
+// next visit.
+const CURSOR_KEY = "editor:cursor";
+
 // ── Scroll-position carry-over across pane toggles ──
 // Toast UI only keeps the editor and preview in sync while both are on screen.
 // When one pane is hidden (the eye toggle's "tab" style, or the mobile
@@ -354,10 +359,70 @@ export default function EditorPane() {
   );
 const getEditorHtml = () => tuiRef.current?.getInstance()?.getHTML() ?? "";
 
-  useEffect(()=>{
-                    tuiRef.current?.getInstance()?.moveCursorToEnd(true);
+  // Persist the caret across reloads. On every caret move we save the markdown
+  // [line, col] of the selection start to localStorage (debounced); on load we
+  // put the caret back where it was. On a first-ever visit (nothing saved yet)
+  // we drop it at the end of the existing content instead.
+  useEffect(() => {
+    if (!tuiReady) return;
+    const inst = tuiRef.current?.getInstance();
+    if (!inst) return;
 
-  },[tuiReady,tuiRef])
+    // Read the saved caret + scroll position up front, before wiring the saver,
+    // so a stray caretChange can't clobber it before we restore.
+    let target: { caret: [number, number]; scrollTop: number } | null = null;
+    try {
+      const saved = localStorage.getItem(CURSOR_KEY);
+      const parsed = saved ? JSON.parse(saved) : null;
+      // Only accept the current shape: { caret: [line, col], scrollTop }.
+      // Anything else (an older/malformed value) falls through to end-of-doc.
+      if (parsed && Array.isArray(parsed.caret) && parsed.caret.length === 2) {
+        target = parsed;
+      }
+    } catch {
+      target = null; // malformed value → fall back to end-of-doc
+    }
+
+    // Double rAF: let ProseMirror commit + paint the initial document first, so
+    // the caret lands on real content and the editor scrolls it into view.
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        if (target) {
+          inst.setSelection(target.caret, target.caret);
+          inst.focus();
+          console.log(target.scrollTop)
+          inst.setScrollTop(target.scrollTop); // back to the saved scroll spot
+        } else {
+          inst.moveCursorToEnd(true); // first visit: end of content
+          inst.focus();
+        }
+      })
+    );
+
+    // Save on every caret move, debounced so dragging a selection or holding an
+    // arrow key writes once the caret settles, not on every transaction.
+    let t: ReturnType<typeof setTimeout> | null = null;
+    const save = () => {
+      const sel = inst.getSelection?.();
+      const start = Array.isArray(sel?.[0]) ? sel[0] : null;
+      if (!start) return;
+      const { editor } = getPaneScrollers();
+      const scrollTop = editor ? editor.scrollTop : 0;
+      if (t) clearTimeout(t);
+      t = setTimeout(() => {
+        localStorage.setItem(
+          CURSOR_KEY,
+          JSON.stringify({ caret: start, scrollTop })
+        );
+      }, 300);
+    };
+    inst.on("caretChange", save);
+
+    return () => {
+      if (t) clearTimeout(t);
+      inst.off?.("caretChange");
+    };
+  }, [tuiReady])
 
   return (
     <div className="editor-container" id="editor" data-mview={mobileView}>
@@ -393,16 +458,6 @@ const getEditorHtml = () => tuiRef.current?.getInstance()?.getHTML() ?? "";
 
             onLoad={() => {
               setTuiReady(true);
-              if (initialBodyRef.current.trim()) {
-                // Double rAF: the first frame lets ProseMirror commit the
-                // initial document, the second runs after it has painted, so
-                // the caret lands on real content instead of an empty doc.
-                // requestAnimationFrame(() =>
-                //   requestAnimationFrame(() => {
-                //     tuiRef.current?.getInstance()?.moveCursorToEnd(true);
-                //   })
-                // );
-              }
             }}
           />
         )}

@@ -1,3 +1,4 @@
+"use client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -194,22 +195,20 @@ export default function MarkdownDocs() {
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
             <a
-              href="#editor"
               className={cn(
                 buttonVariants({ size: "lg" }),
                 "h-11 rounded-full bg-[#000] px-6 text-white hover:bg-[#1d1816]"
               )}
             >
-              Start Writing — It&apos;s Free ↑
+              Start Writing — It&apos;s Free 
             </a>
             <a
-              href="#how-it-works"
               className={cn(
                 buttonVariants({ variant: "outline", size: "lg" }),
                 "h-11 rounded-full border-transparent bg-[#f5f3f1] px-6 text-[#000] hover:bg-[#ebebeb]"
               )}
             >
-              See How It Works ↓
+              See How It Works 
             </a>
           </div>
         </div>
@@ -261,7 +260,6 @@ export default function MarkdownDocs() {
 
       {/* ── How It Works ── */}
       <section
-        id="how-it-works"
         aria-labelledby="how-heading"
         className="bg-[#f8f8f8] py-16 md:py-20"
       >

@@ -53,11 +53,15 @@ export default function FeedbackButton({
 }: {
   triggerClassName?: string;
 }) {
-  
+
   const openFeedback = async () => {
     try {
       await loadTally();
-      window.Tally?.openPopup(FORM_ID, { hideTitle: true, autoClose: 1000 });
+      window.Tally?.openPopup(FORM_ID, {
+        layout: "modal",
+        hideTitle: true,
+        autoClose: 1000,
+      });
     } catch {
       // Network/load failure — fall back to opening the form in a new tab so
       // the button is never a dead end.
@@ -65,7 +69,7 @@ export default function FeedbackButton({
     }
   };
 
-  return (
+return (
     <Button
       variant="ghost"
       title="Send feedback"
@@ -73,18 +77,13 @@ export default function FeedbackButton({
       aria-haspopup="dialog"
       onClick={openFeedback}
       className={
-        "flex h-7 w-auto cursor-pointer items-center gap-1.5 rounded-[6px] " +
-        "border border-black/15 bg-black/[0.04] px-2.5 text-[12px] font-medium " +
-        "text-black/75 transition-colors hover:-translate-y-px hover:bg-black/[0.08] " +
-        "hover:text-black/90 active:translate-y-0 dark:border-white/20 " +
-        "dark:bg-white/[0.08] dark:text-white/80 dark:hover:bg-white/[0.14] " +
-        "dark:hover:text-white " +
+        "flex h-7 w-7 cursor-pointer items-center justify-center rounded-[6px] " +
+        "text-black/75 transition-colors hover:-translate-y-px hover:text-black/90 " +
+        "active:translate-y-0 dark:text-white/80 dark:hover:text-white " +
         triggerClassName
       }
     >
-      <MessageSquarePlus className="size-[15px]" />
-      {/* Label hides on very small screens to save toolbar space. */}
-      <span className="hidden sm:inline">Feedback</span>
+      <MessageSquarePlus className="size-[16px]" />
     </Button>
   );
 }
