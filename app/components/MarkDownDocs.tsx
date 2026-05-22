@@ -160,7 +160,7 @@ const howToJsonLd = {
 
 export default function MarkdownDocs() {
   return (
-    <section className="bg-white text-[#09090b]">
+    <div className="bg-white text-[#09090b]">
       {/* AEO structured data — kept in sync with the rendered FAQ / steps. */}
       <script
         type="application/ld+json"
@@ -171,7 +171,7 @@ export default function MarkdownDocs() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(howToJsonLd) }}
       />
       {/* ── Hero ── */}
-      <div className="bg-white py-20 text-center md:py-28">
+      <header className="bg-white py-20 text-center md:py-28">
         <div className="mx-auto max-w-3xl px-6">
           <div className="flex justify-center">
             <Eyebrow center>100% Free · No Sign-Up · Private</Eyebrow>
@@ -213,16 +213,29 @@ export default function MarkdownDocs() {
             </a>
           </div>
         </div>
-      </div>
+      </header>
 
       {/* ── Audience Cards ── */}
-      <div className="mx-auto max-w-5xl px-6 py-16 md:py-20">
+      <section
+        aria-labelledby="audience-heading"
+        className="mx-auto max-w-5xl px-6 py-16 md:py-20"
+      >
         <div className="mb-3">
           <Eyebrow center>Built For</Eyebrow>
         </div>
-        <h2 className="text-center text-2xl font-bold text-[#09090b] md:text-3xl">
+        <h2
+          id="audience-heading"
+          className="text-center text-2xl font-bold text-[#09090b] md:text-3xl"
+        >
           One Editor, Every Workflow
         </h2>
+
+        {/* Answer-first lead: a self-contained sentence an answer engine can quote. */}
+        <p className="mx-auto mt-4 max-w-2xl text-center text-base leading-relaxed text-[#5e5e5e]">
+          The Online Markdown Editor works for anyone who writes in Markdown —
+          bloggers drafting posts, developers writing READMEs, and students
+          taking notes — all in the same fast, distraction-free workspace.
+        </p>
 
         <div className="mt-10 grid gap-5 sm:grid-cols-3">
           {AUDIENCES.map((card) => (
@@ -244,46 +257,76 @@ export default function MarkdownDocs() {
             </Card>
           ))}
         </div>
-      </div>
+      </section>
 
       {/* ── How It Works ── */}
-      <div id="how-it-works" className="bg-[#f8f8f8] py-16 md:py-20">
+      <section
+        id="how-it-works"
+        aria-labelledby="how-heading"
+        className="bg-[#f8f8f8] py-16 md:py-20"
+      >
         <div className="mx-auto max-w-3xl px-6">
           <div className="mb-3">
             <Eyebrow>Getting Started</Eyebrow>
           </div>
-          <h2 className="text-2xl font-bold text-[#09090b] md:text-3xl">
+          <h2
+            id="how-heading"
+            className="text-2xl font-bold text-[#09090b] md:text-3xl"
+          >
             How Does the Markdown Editor Work?
           </h2>
 
-          <div className="mt-10 space-y-8">
+          {/* Answer-first lead: a complete answer in two sentences. */}
+          <p className="mt-4 text-base leading-relaxed text-[#5e5e5e]">
+            The Markdown editor works in three steps: type or paste Markdown on
+            the left, watch it render live on the right, then export the result
+            as HTML or PDF. No setup, install, or sign-up is required.
+          </p>
+
+          {/* Ordered list — sequential steps, so an <ol> (not <div>s) is the
+              correct semantics and mirrors the HowTo JSON-LD above. */}
+          <ol className="mt-10 space-y-8">
             {STEPS.map((step) => (
-              <div key={step.num} className="flex items-start gap-5">
+              <li key={step.num} className="flex items-start gap-5">
                 <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#000] text-sm font-bold text-white">
                   {step.num}
                 </div>
                 <div>
-                  <p className="text-base font-semibold text-[#09090b]">
+                  <h3 className="text-base font-semibold text-[#09090b]">
                     {step.title}
-                  </p>
+                  </h3>
                   <p className="mt-1 text-sm leading-relaxed text-[#5e5e5e]">
                     {step.text}
                   </p>
                 </div>
-              </div>
+              </li>
             ))}
-          </div>
+          </ol>
         </div>
-      </div>
+      </section>
 
       {/* ── Features ── */}
-      <div className="mx-auto max-w-5xl px-6 py-16 md:py-20">
+      <section
+        aria-labelledby="features-heading"
+        className="mx-auto max-w-5xl px-6 py-16 md:py-20"
+      >
         <div className="mb-3">
           <Eyebrow>Features</Eyebrow>
         </div>
-        <h2 className="text-2xl font-bold text-[#09090b] md:text-3xl">
+        <h2
+          id="features-heading"
+          className="text-2xl font-bold text-[#09090b] md:text-3xl"
+        >
           Why Choose Our Markdown Editor?
         </h2>
+
+        {/* Answer-first lead: leads with the claim, then the supporting detail. */}
+        <p className="mt-4 max-w-2xl text-base leading-relaxed text-[#5e5e5e]">
+          Choose this Markdown editor because it is free, private, and runs
+          entirely in your browser — with live side-by-side preview, rich
+          formatting, one-click HTML and PDF export, and dark mode, while nothing
+          you write is ever sent to a server.
+        </p>
 
         <div className="mt-10 grid gap-5 sm:grid-cols-2">
           {FEATURES.map((f) => (
@@ -319,14 +362,21 @@ export default function MarkdownDocs() {
             </CardContent>
           </Card>
         </div>
-      </div>
+      </section>
 
       {/* ── FAQ ── */}
-      <div id="faq" className="mx-auto max-w-3xl px-6 py-16 md:py-20">
+      <section
+        id="faq"
+        aria-labelledby="faq-heading"
+        className="mx-auto max-w-3xl px-6 py-16 md:py-20"
+      >
         <div className="mb-3">
           <Eyebrow>FAQ</Eyebrow>
         </div>
-        <h2 className="text-2xl font-bold text-[#09090b] md:text-3xl">
+        <h2
+          id="faq-heading"
+          className="text-2xl font-bold text-[#09090b] md:text-3xl"
+        >
           Frequently Asked Questions
         </h2>
 
@@ -342,12 +392,20 @@ export default function MarkdownDocs() {
             </div>
           ))}
         </div>
-      </div>
+      </section>
 
       {/* ── About ── */}
-      <div className="bg-[#f8f8f8] py-16 md:py-20">
+      <section
+        aria-labelledby="about-heading"
+        className="bg-[#f8f8f8] py-16 md:py-20"
+      >
         <div className="mx-auto max-w-3xl px-6 text-center">
-          <h2 className="text-2xl font-bold text-[#09090b] md:text-3xl">About</h2>
+          <h2
+            id="about-heading"
+            className="text-2xl font-bold text-[#09090b] md:text-3xl"
+          >
+            About
+          </h2>
           <p className="mt-4 text-base leading-relaxed text-[#5e5e5e]">
             Online Markdown Editor is 100% free, requires no account, and runs
             entirely in your browser. It&apos;s built for writers, developers,
@@ -355,7 +413,7 @@ export default function MarkdownDocs() {
             preview Markdown.
           </p>
         </div>
-      </div>
+      </section>
 
       {/* ── Footer ── */}
       <Separator className="bg-[#ebebeb]" />
@@ -377,6 +435,6 @@ export default function MarkdownDocs() {
           © {new Date().getFullYear()} Markdown Editor. All rights reserved.
         </p>
       </footer>
-    </section>
+    </div>
   );
 }

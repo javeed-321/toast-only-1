@@ -179,17 +179,17 @@
 .editor-container .toastui-editor-md-container
   .toastui-editor-md-code-block-line-background.start {
     padding-top: 2px;
-  /* border-top: 1px solid #d0d7de;
+   border-top: 1px solid #d0d7de;
   border-top-left-radius: 6px;
-  border-top-right-radius: 6px; */
+  border-top-right-radius: 6px; 
 }
 
 /* Closing fence: has a ``` delimiter inside, and isn't the opening (.start). */
 .editor-container .toastui-editor-md-container
   .toastui-editor-md-code-block-line-background:not(.start):has(.toastui-editor-md-delimiter) {
-  /* border-bottom: 1px solid #d0d7de;
+  border-bottom: 1px solid #d0d7de;
   border-bottom-left-radius: 6px;
-  border-bottom-right-radius: 6px; */
+  border-bottom-right-radius: 6px;
   margin-bottom: 10px;
 }
 
@@ -198,7 +198,7 @@
 
 .editor-container  .toastui-editor-dark.toastui-editor-defaultUI
 {
-  background: red !important;
+  /* background: red !important; */
 }
 /* ============================================================================
    Responsive — tablet & mobile (< lg / 1024px): show ONE pane at a time.
