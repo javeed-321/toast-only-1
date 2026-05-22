@@ -30,7 +30,7 @@ const AUDIENCES = [
   {
     num: "03",
     title: "Students & Researchers",
-    text: "Take structured notes with headings, task lists, and LaTeX math rendered beautifully via KaTeX — perfect for study and reports.",
+    text: "Take structured notes with headings, task lists.",
   },
 ];
 
@@ -102,7 +102,7 @@ const FAQS = [
   },
   {
     q: "Which Markdown features are supported?",
-    a: "Headings, tables, task lists, fenced code blocks with syntax highlighting for 35+ languages, blockquotes, images, links, and LaTeX math rendered with KaTeX.",
+    a: "Headings, tables, task lists, fenced code blocks with syntax highlighting for 35+ languages, blockquotes, images, links.",
   },
 ];
 
@@ -171,6 +171,41 @@ export default function MarkdownDocs() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(howToJsonLd) }}
       />
+      {/* ── Brand callout ── highlighted "built by" banner at the top, styled
+          after the jam.dev utility pages: brand chip + "by X — tagline" + CTA. */}
+      <div className="mx-auto max-w-5xl px-6 pt-6">
+        <a
+          href="https://documentation.ai/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group flex flex-col items-center gap-4 rounded-2xl border border-[#ebebeb] bg-[#fcfcfc] px-6 py-5 text-center transition-colors hover:border-[#f97d00]/50 sm:flex-row sm:justify-between sm:text-left md:px-8"
+        >
+          <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-center">
+            {/* Brand chip — mirrors the orange icon chips used below. */}
+            <span className="inline-flex size-11 shrink-0 items-center justify-center rounded-xl bg-[#f97d00] text-lg font-bold text-white">
+              D
+            </span>
+            <p className="text-sm leading-relaxed text-[#5e5e5e] sm:text-base">
+              by{" "}
+              <span className="font-semibold text-[#09090b]">
+                Documentation.AI
+              </span>{" "}
+              — Create and maintain world-class documentation built for both
+              humans and AI.
+            </p>
+          </div>
+
+          <span
+            className={cn(
+              buttonVariants({ size: "lg" }),
+              "h-11 shrink-0 rounded-full bg-[#000] px-6 text-white group-hover:bg-[#1d1816]"
+            )}
+          >
+            Try Documentation.AI →
+          </span>
+        </a>
+      </div>
+
       {/* ── Hero ── */}
       <header className="bg-white py-20 text-center md:py-28">
         <div className="mx-auto max-w-3xl px-6">
@@ -416,20 +451,7 @@ export default function MarkdownDocs() {
       {/* ── Footer ── */}
       <Separator className="bg-[#ebebeb]" />
       <footer className="bg-white py-8 text-center text-sm text-[#959595]">
-        <p className="text-[#5e5e5e]">
-          by{" "}
-          <a
-            href="https://documentation.ai/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-semibold text-[#f97d00] hover:underline"
-          >
-            Documentation.AI
-          </a>{" "}
-          — Create and maintain world-class documentation built for both humans
-          and AI
-        </p>
-        <p className="mt-2">
+        <p>
           © {new Date().getFullYear()} Markdown Editor. All rights reserved.
         </p>
       </footer>
