@@ -18,6 +18,4 @@ features writers actually use day-to-day.
 
 Everything runs entirely in the browser. There is no backend, no account, and
 no network requirement after the first page load.
-
-
 `;

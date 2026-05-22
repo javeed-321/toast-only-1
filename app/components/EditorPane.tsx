@@ -34,16 +34,40 @@ function getHtmlStats(html: string) {
   return { chars, words, paragraphs };
 }
 
-function EditorSkeleton() {
+// One column of shimmering lines, filling its parent.
+function SkeletonColumn({ widths }: { widths: number[] }) {
   return (
-    <div className="absolute inset-0 z-10 flex flex-col gap-4 p-6 bg-white dark:bg-[#1e1e1e]">
-      {[95, 88, 72, 91, 65, 84, 78, 93, 60, 87, 74, 92, 68, 81, 55, 90, 76].map((w, i) => (
+    <div className="flex flex-1 flex-col gap-3 p-6">
+      {widths.map((w, i) => (
         <Skeleton
           key={i}
-          className="h-5 rounded bg-black/10 dark:bg-white/10"
+          className="h-3.5 rounded bg-black/10 dark:bg-white/10"
           style={{ width: `${w}%` }}
         />
       ))}
+    </div>
+  );
+}
+
+// Mirrors the real editor's vertical split: a left (editor) and right (preview)
+// column of shimmer lines with a 1px divider in the same splitter color
+// (#dcdcdc / #3a3a3a). The editor pane is narrower than the preview, so the
+// divider sits left of center to match the real layout. Below `lg` the editor
+// collapses to a single pane, so the divider and right column are hidden.
+function EditorSkeleton() {
+  return (
+    <div className="absolute inset-0 z-10 flex bg-white dark:bg-[#1e1e1e]">
+      {/* Left — editor pane: full width on mobile (preview hidden), 42% on lg
+          so the divider sits left of center like the real layout. */}
+      <div className="flex basis-full shrink-0 lg:basis-[49%]">
+        <SkeletonColumn widths={[95, 88, 72, 91, 65, 84, 78, 93, 60, 87, 74, 92, 68, 81, 55, 90, 76]} />
+      </div>
+      {/* Divider — same color/width as the real vertical-split splitter */}
+      <div className="hidden w-px shrink-0 bg-[#dcdcdc] dark:bg-[#3a3a3a] lg:block" />
+      {/* Right — preview pane (wider; hidden below lg to match single-pane layout) */}
+      <div className="hidden flex-1 lg:flex">
+        <SkeletonColumn widths={[82, 90, 68, 85, 73, 88, 60, 79, 92, 64, 86, 70, 91, 58, 83, 75, 89]} />
+      </div>
     </div>
   );
 }
@@ -349,7 +373,7 @@ const getEditorHtml = () => tuiRef.current?.getInstance()?.getHTML() ?? "";
       <div className="relative" style={{ height: "calc(100vh - 40px - 28px)" }}>
         {/* Skeleton covers the pane until the editor has mounted and painted
             (its bundle + the highlight plugin both have to load first). */}
-        {/* {!tuiReady && <EditorSkeleton />} */}
+        {!tuiReady && <EditorSkeleton />}
         {/* Render only once the saved doc is loaded and the syntax-highlight
             plugin is ready, so it goes straight in as initialValue (no seed-text
             flash) and code blocks are highlighted from the first render. */}
