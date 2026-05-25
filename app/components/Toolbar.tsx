@@ -6,6 +6,7 @@ import {
   Eye,
   Pencil,
   MoreHorizontal,
+  ArrowUpRight,
 } from "lucide-react";
 import {
   Sheet,
@@ -134,6 +135,32 @@ const buttons: ToolButton[] = [
       >
         <MoreHorizontal className="size-[14px]" />
       </Button>
+
+      {/* Brand callout pill — links to Documentation.AI. Mirrors the bottom
+          "built by" banner; hidden on small screens where the toolbar is dense. */}
+      <a
+        href="https://documentation.ai/"
+        target="_blank"
+        rel="noopener noreferrer"
+        title="Documentation.AI"
+        className={
+          "ml-[140px] hidden items-center gap-1.5 rounded-full border border-black/10 " +
+          "bg-black/[0.04] px-2.5 py-1 text-[11px] font-medium text-black/65 " +
+          "transition-colors hover:border-black/20 hover:bg-black/[0.08] hover:text-black/85 " +
+          "lg:inline-flex dark:border-white/10 dark:bg-white/[0.06] dark:text-white/65 " +
+          "dark:hover:border-white/20 dark:hover:bg-white/[0.10] dark:hover:text-white/90"
+        }
+      >
+        <span className="inline-flex size-3.5 items-center justify-center rounded-sm bg-[#f97d00] text-[8px] font-bold text-white">
+          D
+        </span>
+        by{" "}
+        <span className="font-semibold text-black/85 dark:text-white/90">
+          Documentation.AI
+        </span>{" "}
+        — Docs built for humans &amp; AI
+        <ArrowUpRight className="size-3" />
+      </a>
 
       {/* Pushes everything after it to the far right. */}
       <span className="flex-1" />

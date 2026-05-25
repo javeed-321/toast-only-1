@@ -108,7 +108,7 @@ const FAQS = [
 
 function FeatureIcon({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg bg-[#f8f4e5] text-base text-[#f97d00]">
+    <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg bg-[#f8f4e5] dark:bg-white dark:bg-[#1e1e1e]/10 text-base text-[#f97d00]">
       {children}
     </span>
   );
@@ -126,7 +126,7 @@ function Eyebrow({
   return (
     <div className={cn("flex items-center gap-2", center && "justify-center")}>
       <span className="size-1.5 shrink-0 rounded-full bg-[#f97d00]" />
-      <span className="font-mono text-[12px] uppercase tracking-[0.02em] text-[#5e5e5e]">
+      <span className="font-mono text-[12px] uppercase tracking-[0.02em] text-[#5e5e5e] dark:text-white/70">
         {children}
       </span>
     </div>
@@ -161,7 +161,7 @@ const howToJsonLd = {
 
 export default function MarkdownDocs() {
   return (
-    <div className="bg-white text-[#09090b]">
+    <div className="bg-white dark:bg-[#1e1e1e] text-[#09090b] dark:text-white">
       {/* AEO structured data — kept in sync with the rendered FAQ / steps. */}
       <script
         type="application/ld+json"
@@ -178,16 +178,16 @@ export default function MarkdownDocs() {
           href="https://documentation.ai/"
           target="_blank"
           rel="noopener noreferrer"
-          className="group flex flex-col items-center gap-4 rounded-2xl border border-[#ebebeb] bg-[#fcfcfc] px-6 py-5 text-center transition-colors hover:border-[#f97d00]/50 sm:flex-row sm:justify-between sm:text-left md:px-8"
+          className="group flex flex-col items-center gap-4 rounded-2xl border border-[#ebebeb] dark:border-white/10 bg-[#fcfcfc] dark:bg-[#262626] px-6 py-5 text-center transition-colors hover:border-[#f97d00]/50 sm:flex-row sm:justify-between sm:text-left md:px-8"
         >
           <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-center">
             {/* Brand chip — mirrors the orange icon chips used below. */}
             <span className="inline-flex size-11 shrink-0 items-center justify-center rounded-xl bg-[#f97d00] text-lg font-bold text-white">
               D
             </span>
-            <p className="text-sm leading-relaxed text-[#5e5e5e] sm:text-base">
+            <p className="text-sm leading-relaxed text-[#5e5e5e] dark:text-white/70 sm:text-base">
               by{" "}
-              <span className="font-semibold text-[#09090b]">
+              <span className="font-semibold text-[#09090b] dark:text-white">
                 Documentation.AI
               </span>{" "}
               — Create and maintain world-class documentation built for both
@@ -198,7 +198,7 @@ export default function MarkdownDocs() {
           <span
             className={cn(
               buttonVariants({ size: "lg" }),
-              "h-11 shrink-0 rounded-full bg-[#000] px-6 text-white group-hover:bg-[#1d1816]"
+              "h-11 shrink-0 rounded-full bg-[#000] px-6 text-white group-hover:bg-[#1d1816] dark:bg-white dark:text-black dark:group-hover:bg-white/90"
             )}
           >
             Try Documentation.AI →
@@ -207,18 +207,18 @@ export default function MarkdownDocs() {
       </div>
 
       {/* ── Hero ── */}
-      <header className="bg-white py-20 text-center md:py-28">
+      <header className="bg-white dark:bg-[#1e1e1e] py-20 text-center md:py-28">
         <div className="mx-auto max-w-3xl px-6">
           <div className="flex justify-center">
             <Eyebrow center>100% Free · No Sign-Up · Private</Eyebrow>
           </div>
 
-          <h1 className="mt-4 text-4xl font-bold leading-tight tracking-tight text-[#09090b] md:text-[3.25rem]">
+          <h1 className="mt-4 text-4xl font-bold leading-tight tracking-tight text-[#09090b] dark:text-white md:text-[3.25rem]">
             Free Online <span className="text-[#f97d00]">Markdown Editor</span>
           </h1>
 
-          <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-[#5e5e5e] md:text-xl">
-            <strong className="font-semibold text-[#09090b]">
+          <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-[#5e5e5e] dark:text-white/70 md:text-xl">
+            <strong className="font-semibold text-[#09090b] dark:text-white">
               Online Markdown Editor is a free, browser-based Markdown editor for
               writers, developers, and students.
             </strong>{" "}
@@ -232,7 +232,7 @@ export default function MarkdownDocs() {
             <a
               className={cn(
                 buttonVariants({ size: "lg" }),
-                "h-11 rounded-full bg-[#000] px-6 text-white hover:bg-[#1d1816]"
+                "h-11 rounded-full bg-[#000] px-6 text-white hover:bg-[#1d1816] dark:bg-white dark:text-black dark:hover:bg-white/90"
               )}
             >
               Start Writing — It&apos;s Free 
@@ -240,7 +240,7 @@ export default function MarkdownDocs() {
             <a
               className={cn(
                 buttonVariants({ variant: "outline", size: "lg" }),
-                "h-11 rounded-full border-transparent bg-[#f5f3f1] px-6 text-[#000] hover:bg-[#ebebeb]"
+                "h-11 rounded-full border-transparent bg-[#f5f3f1] px-6 text-[#000] hover:bg-[#ebebeb] dark:bg-white/10 dark:text-white dark:hover:bg-white/15"
               )}
             >
               See How It Works 
@@ -259,13 +259,13 @@ export default function MarkdownDocs() {
         </div>
         <h2
           id="audience-heading"
-          className="text-center text-2xl font-bold text-[#09090b] md:text-3xl"
+          className="text-center text-2xl font-bold text-[#09090b] dark:text-white md:text-3xl"
         >
           One Editor, Every Workflow
         </h2>
 
         {/* Answer-first lead: a self-contained sentence an answer engine can quote. */}
-        <p className="mx-auto mt-4 max-w-2xl text-center text-base leading-relaxed text-[#5e5e5e]">
+        <p className="mx-auto mt-4 max-w-2xl text-center text-base leading-relaxed text-[#5e5e5e] dark:text-white/70">
           The Online Markdown Editor works for anyone who writes in Markdown —
           bloggers drafting posts, developers writing READMEs, and students
           taking notes — all in the same fast, distraction-free workspace.
@@ -275,17 +275,17 @@ export default function MarkdownDocs() {
           {AUDIENCES.map((card) => (
             <Card
               key={card.num}
-              className="rounded-2xl border-[#ebebeb] bg-[#fcfcfc] shadow-none"
+              className="rounded-2xl border-[#ebebeb] dark:border-white/10 bg-[#fcfcfc] dark:bg-[#262626] shadow-none"
             >
               <CardHeader>
                 <span className="font-mono text-xs font-bold text-[#f97d00]">
                   {card.num}
                 </span>
-                <CardTitle className="mt-1 text-base font-semibold text-[#09090b]">
+                <CardTitle className="mt-1 text-base font-semibold text-[#09090b] dark:text-white">
                   {card.title}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="text-sm leading-relaxed text-[#5e5e5e]">
+              <CardContent className="text-sm leading-relaxed text-[#5e5e5e] dark:text-white/70">
                 {card.text}
               </CardContent>
             </Card>
@@ -296,7 +296,7 @@ export default function MarkdownDocs() {
       {/* ── How It Works ── */}
       <section
         aria-labelledby="how-heading"
-        className="bg-[#f8f8f8] py-16 md:py-20"
+        className="bg-[#f8f8f8] dark:bg-[#181818] py-16 md:py-20"
       >
         <div className="mx-auto max-w-3xl px-6">
           <div className="mb-3">
@@ -304,13 +304,13 @@ export default function MarkdownDocs() {
           </div>
           <h2
             id="how-heading"
-            className="text-2xl font-bold text-[#09090b] md:text-3xl"
+            className="text-2xl font-bold text-[#09090b] dark:text-white md:text-3xl"
           >
             How Does the Markdown Editor Work?
           </h2>
 
           {/* Answer-first lead: a complete answer in two sentences. */}
-          <p className="mt-4 text-base leading-relaxed text-[#5e5e5e]">
+          <p className="mt-4 text-base leading-relaxed text-[#5e5e5e] dark:text-white/70">
             The Markdown editor works in three steps: type or paste Markdown on
             the left, watch it render live on the right, then export the result
             as HTML or PDF. No setup, install, or sign-up is required.
@@ -321,14 +321,14 @@ export default function MarkdownDocs() {
           <ol className="mt-10 space-y-8">
             {STEPS.map((step) => (
               <li key={step.num} className="flex items-start gap-5">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#000] text-sm font-bold text-white">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#000] text-sm font-bold text-white dark:bg-white dark:text-black">
                   {step.num}
                 </div>
                 <div>
-                  <h3 className="text-base font-semibold text-[#09090b]">
+                  <h3 className="text-base font-semibold text-[#09090b] dark:text-white">
                     {step.title}
                   </h3>
-                  <p className="mt-1 text-sm leading-relaxed text-[#5e5e5e]">
+                  <p className="mt-1 text-sm leading-relaxed text-[#5e5e5e] dark:text-white/70">
                     {step.text}
                   </p>
                 </div>
@@ -348,13 +348,13 @@ export default function MarkdownDocs() {
         </div>
         <h2
           id="features-heading"
-          className="text-2xl font-bold text-[#09090b] md:text-3xl"
+          className="text-2xl font-bold text-[#09090b] dark:text-white md:text-3xl"
         >
           Why Choose Our Markdown Editor?
         </h2>
 
         {/* Answer-first lead: leads with the claim, then the supporting detail. */}
-        <p className="mt-4 max-w-2xl text-base leading-relaxed text-[#5e5e5e]">
+        <p className="mt-4 max-w-2xl text-base leading-relaxed text-[#5e5e5e] dark:text-white/70">
           Choose this Markdown editor because it is free, private, and runs
           entirely in your browser — with live side-by-side preview, rich
           formatting, one-click HTML and PDF export, and dark mode, while nothing
@@ -365,29 +365,29 @@ export default function MarkdownDocs() {
           {FEATURES.map((f) => (
             <Card
               key={f.title}
-              className="rounded-2xl border-[#ebebeb] bg-[#fcfcfc] shadow-none"
+              className="rounded-2xl border-[#ebebeb] dark:border-white/10 bg-[#fcfcfc] dark:bg-[#262626] shadow-none"
             >
               <CardHeader>
                 <FeatureIcon>{f.icon}</FeatureIcon>
-                <CardTitle className="mt-4 text-base font-semibold text-[#09090b]">
+                <CardTitle className="mt-4 text-base font-semibold text-[#09090b] dark:text-white">
                   {f.title}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="text-sm leading-relaxed text-[#5e5e5e]">
+              <CardContent className="text-sm leading-relaxed text-[#5e5e5e] dark:text-white/70">
                 {f.text}
               </CardContent>
             </Card>
           ))}
 
           {/* Full-width privacy card */}
-          <Card className="rounded-2xl border-[#ebebeb] bg-[#fcfcfc] shadow-none sm:col-span-2">
+          <Card className="rounded-2xl border-[#ebebeb] dark:border-white/10 bg-[#fcfcfc] dark:bg-[#262626] shadow-none sm:col-span-2">
             <CardContent className="flex items-start gap-5">
               <FeatureIcon>◉</FeatureIcon>
               <div>
-                <h3 className="text-base font-semibold text-[#09090b]">
+                <h3 className="text-base font-semibold text-[#09090b] dark:text-white">
                   Private by Design
                 </h3>
-                <p className="mt-2 text-sm leading-relaxed text-[#5e5e5e]">
+                <p className="mt-2 text-sm leading-relaxed text-[#5e5e5e] dark:text-white/70">
                   Your document is saved locally in your browser and never
                   uploaded. Your writing stays on your device.
                 </p>
@@ -408,7 +408,7 @@ export default function MarkdownDocs() {
         </div>
         <h2
           id="faq-heading"
-          className="text-2xl font-bold text-[#09090b] md:text-3xl"
+          className="text-2xl font-bold text-[#09090b] dark:text-white md:text-3xl"
         >
           Frequently Asked Questions
         </h2>
@@ -416,10 +416,10 @@ export default function MarkdownDocs() {
         <div className="mt-10 space-y-8">
           {FAQS.map((item) => (
             <div key={item.q}>
-              <h3 className="text-base font-semibold text-[#09090b]">
+              <h3 className="text-base font-semibold text-[#09090b] dark:text-white">
                 {item.q}
               </h3>
-              <p className="mt-2 text-sm leading-relaxed text-[#5e5e5e]">
+              <p className="mt-2 text-sm leading-relaxed text-[#5e5e5e] dark:text-white/70">
                 {item.a}
               </p>
             </div>
@@ -430,16 +430,16 @@ export default function MarkdownDocs() {
       {/* ── About ── */}
       <section
         aria-labelledby="about-heading"
-        className="bg-[#f8f8f8] py-16 md:py-20"
+        className="bg-[#f8f8f8] dark:bg-[#181818] py-16 md:py-20"
       >
         <div className="mx-auto max-w-3xl px-6 text-center">
           <h2
             id="about-heading"
-            className="text-2xl font-bold text-[#09090b] md:text-3xl"
+            className="text-2xl font-bold text-[#09090b] dark:text-white md:text-3xl"
           >
             About
           </h2>
-          <p className="mt-4 text-base leading-relaxed text-[#5e5e5e]">
+          <p className="mt-4 text-base leading-relaxed text-[#5e5e5e] dark:text-white/70">
             Online Markdown Editor is 100% free, requires no account, and runs
             entirely in your browser. It&apos;s built for writers, developers,
             and students who want a fast, distraction-free way to write and
@@ -449,8 +449,8 @@ export default function MarkdownDocs() {
       </section>
 
       {/* ── Footer ── */}
-      <Separator className="bg-[#ebebeb]" />
-      <footer className="bg-white py-8 text-center text-sm text-[#959595]">
+      <Separator className="bg-[#ebebeb] dark:bg-white/10" />
+      <footer className="bg-white dark:bg-[#1e1e1e] py-8 text-center text-sm text-[#959595] dark:text-white/50">
         <p>
           © {new Date().getFullYear()} Markdown Editor. All rights reserved.
         </p>
