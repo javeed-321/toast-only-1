@@ -97,7 +97,7 @@ const buttons: ToolButton[] = [
     { title: "Inline code",     onClick: () => exec("code"),                                                 icon: <Code className={ICON_SIZE} />,          primary: true },
     { title: "Code block",      onClick: () => exec("codeBlock"),                                            icon: <Braces className={ICON_SIZE} /> },
     { title: "Link",            onClick: () => exec("addLink", { linkUrl: "https://", linkText: "link" }),   icon: <Link className={ICON_SIZE} /> },
-    { title: "Image",           onClick: () => exec("addImage", { imageUrl: "" }),                           icon: <Image className={ICON_SIZE} /> },
+    { title: "Image",           onClick: () => exec("addImage", { imageUrl: "https://", altText: "image" }), icon: <Image className={ICON_SIZE} /> },
     { title: "Table",           onClick: () => exec("addTable", { rowCount: 3, columnCount: 3 }),            icon: <Table className={ICON_SIZE} /> },
   ];
 

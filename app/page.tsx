@@ -13,6 +13,11 @@ import dynamic from "next/dynamic";
 // is the inherent trade-off of CSR-only and is the accepted requirement here.
 const EditorPane = dynamic(() => import("./components/EditorPane"), {
   ssr: false,
+  // Reserve the editor's full-viewport height while its (large) chunk loads.
+  // Without this the editor occupies no space during load, so the lighter
+  // marketing content below briefly flows to the top of the page and is then
+  // shoved down once the editor mounts — a visible flash/jump on first load.
+  loading: () => <div className="h-screen bg-white dark:bg-[#1e1e1e]" />,
 });
 const MarkdownDocs = dynamic(() => import("./components/MarkDownDocs"), {
   ssr: false,
